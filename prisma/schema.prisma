@@ -133,6 +133,7 @@ model Tenant {
   vocab               TenantVocab[]
   loaReasons          LoaReason[]
   loaAuthorisers      LOAAuthoriser[]
+  loaApprovalScopes   LOAApprovalScope[]
   loaRequests         LOARequest[]
   onCallReasons       OnCallReason[]
   onCallLocations     OnCallLocation[]
@@ -159,6 +160,8 @@ model User {
   passwordHash String
   role         UserRole
   isActive     Boolean  @default(true)
+  canApproveAllLoa Boolean @default(false)
+  receivesOnCallEmails Boolean @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -166,6 +169,8 @@ model User {
   onCallCreated         OnCallRequest[] @relation("OnCallCreatedBy")
   onCallAssigned        OnCallRequest[] @relation("OnCallAssignedTo")
   loaAuthoriserRows     LOAAuthoriser[]
+  loaApprovalScopesAsApprover LOAApprovalScope[] @relation("LoaScopeApprover")
+  loaApprovalScopesAsTarget   LOAApprovalScope[] @relation("LoaScopeTarget")
   loaRequests           LOARequest[]    @relation("LoaRequester")
   loaDecisioned         LOARequest[]    @relation("LoaDecisionBy")
   meetingsCreated       Meeting[]       @relation("MeetingCreatedBy")
@@ -218,6 +223,19 @@ model LOAAuthoriser {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, userId])
+}
+
+model LOAApprovalScope {
+  id           String @id @default(cuid())
+  tenantId     String
+  tenant       Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approverId   String
+  approver     User   @relation("LoaScopeApprover", fields: [approverId], references: [id], onDelete: Cascade)
+  targetUserId String
+  targetUser   User   @relation("LoaScopeTarget", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, approverId, targetUserId])
+  @@index([tenantId, approverId])
 }
 
 model LOARequest {

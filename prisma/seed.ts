@@ -14,8 +14,8 @@ async function main() {
   const passwordHash = await bcrypt.hash("Password123!", 10);
   const adminUser = await (prisma as any).user.upsert({
     where: { tenantId_email: { tenantId: tenant.id, email: "admin@demo.school" } },
-    update: { fullName: "Admin User", role: "ADMIN", isActive: true, passwordHash },
-    create: { tenantId: tenant.id, email: "admin@demo.school", fullName: "Admin User", role: "ADMIN", isActive: true, passwordHash }
+    update: { fullName: "Admin User", role: "ADMIN", isActive: true, canApproveAllLoa: true, receivesOnCallEmails: true, passwordHash },
+    create: { tenantId: tenant.id, email: "admin@demo.school", fullName: "Admin User", role: "ADMIN", isActive: true, canApproveAllLoa: true, receivesOnCallEmails: true, passwordHash }
   });
 
   for (const key of FEATURES) {

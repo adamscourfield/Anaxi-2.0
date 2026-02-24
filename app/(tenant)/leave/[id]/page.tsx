@@ -8,13 +8,13 @@ import { decideLoaRequest } from "../actions";
 export default async function LeaveDetailPage({ params }: { params: { id: string } }) {
   const user = await getSessionUserOrThrow();
   await requireFeature(user.tenantId, "LEAVE");
-  const manager = await canManageLoa(user);
 
   const request = await (prisma as any).lOARequest.findFirst({
     where: { id: params.id, tenantId: user.tenantId },
     include: { requester: true, reason: true, decisionBy: true }
   });
   if (!request) notFound();
+  const manager = request.requesterId !== user.id && (await canManageLoa(user, request.requesterId));
   if (!manager && request.requesterId !== user.id) throw new Error("FORBIDDEN");
 
   return (

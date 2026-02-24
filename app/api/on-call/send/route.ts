@@ -37,7 +37,10 @@ export async function POST(req: Request) {
     include: { student: true, reason: true, location: true }
   });
 
-  const recipients = await (prisma as any).onCallRecipient.findMany({ where: { tenantId: user.tenantId, active: true } });
+  const recipients = await prisma.user.findMany({
+    where: { tenantId: user.tenantId, isActive: true, receivesOnCallEmails: true },
+    select: { email: true }
+  });
   const to = recipients.map((r: any) => ({ email: r.email }));
 
   let emailError: string | null = null;

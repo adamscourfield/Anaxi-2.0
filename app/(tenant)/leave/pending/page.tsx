@@ -1,16 +1,24 @@
 import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature } from "@/lib/guards";
-import { canManageLoa } from "@/lib/loa";
+import { canManageLoa, loaManageableRequesterIds } from "@/lib/loa";
 import { prisma } from "@/lib/prisma";
 
 export default async function LeavePendingPage() {
   const user = await getSessionUserOrThrow();
   await requireFeature(user.tenantId, "LEAVE");
   if (!(await canManageLoa(user))) throw new Error("FORBIDDEN");
+  const requesterIds = await loaManageableRequesterIds(user);
 
   const pending = await (prisma as any).lOARequest.findMany({
-    where: { tenantId: user.tenantId, status: "PENDING" },
+    where: {
+      tenantId: user.tenantId,
+      status: "PENDING",
+      AND: [
+        { requesterId: { not: user.id } },
+        ...(requesterIds ? [{ requesterId: { in: requesterIds } }] : [])
+      ]
+    },
     include: { requester: true, reason: true },
     orderBy: { startAt: "asc" }
   });

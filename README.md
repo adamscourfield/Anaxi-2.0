@@ -87,3 +87,10 @@ If you run on Replit, set `NEXTAUTH_URL` to your Replit app URL (e.g. `https://<
 ## Demo login
 - `admin@demo.school`
 - `Password123!`
+## Admin permissions/settings
+- `/tenant/admin/settings` controls tenant module enable/disable (school-level module assignment)
+- `/tenant/admin/users` now supports:
+  - LOA global approver permission (`canApproveAllLoa`)
+  - LOA scoped approval permissions (approve LOAs for specific staff)
+  - On Call email permission (`receivesOnCallEmails`)
+- LOA approvals block self-approval and enforce approver scope rules.

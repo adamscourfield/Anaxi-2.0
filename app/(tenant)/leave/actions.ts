@@ -44,15 +44,15 @@ export async function createLoaRequest(formData: FormData) {
 export async function decideLoaRequest(formData: FormData) {
   const user = await getSessionUserOrThrow();
   await requireFeature(user.tenantId, "LEAVE");
-  const canManage = await canManageLoa(user);
-  if (!canManage) throw new Error("FORBIDDEN");
-
   const requestId = String(formData.get("requestId") || "");
   const decisionType = String(formData.get("decisionType") || "");
   const decisionNotes = String(formData.get("decisionNotes") || "").trim() || null;
 
   const request = await (prisma as any).lOARequest.findFirst({ where: { id: requestId, tenantId: user.tenantId } });
   if (!request) throw new Error("NOT_FOUND");
+  if (request.requesterId === user.id) throw new Error("CANNOT_APPROVE_OWN_LOA");
+  const canManage = await canManageLoa(user, request.requesterId);
+  if (!canManage) throw new Error("FORBIDDEN");
   if (request.status !== "PENDING") throw new Error("ALREADY_DECIDED");
 
   const status = decisionType === "DENIED" ? "DENIED" : "APPROVED";

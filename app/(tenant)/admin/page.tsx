@@ -8,6 +8,7 @@ export default async function AdminIndexPage() {
       <h1 className="text-xl font-semibold">Admin</h1>
       <ul className="list-disc pl-5">
         <li><Link className="underline" href="/tenant/admin/users">Users</Link></li>
+        <li><Link className="underline" href="/tenant/admin/settings">Settings (Modules)</Link></li>
         <li><Link className="underline" href="/tenant/admin/features">Features</Link></li>
         <li><Link className="underline" href="/tenant/admin/vocab">Vocabulary</Link></li>
         <li><Link className="underline" href="/tenant/admin/taxonomies">Taxonomies</Link></li>

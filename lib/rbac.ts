@@ -10,15 +10,26 @@ export type OnCallPermission =
   | "oncall:view_all"
   | "oncall:cancel";
 
-const ROLE_PERMISSIONS: Record<UserRole, OnCallPermission[]> = {
-  ADMIN: ["oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel"],
-  SLT: ["oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all"],
-  LEADER: ["oncall:create", "oncall:cancel"],
-  TEACHER: ["oncall:create", "oncall:cancel"],
-  HR: ["oncall:create"],
+export type StudentPermission =
+  | "students:read"
+  | "students:write"
+  | "import:write";
+
+export type AppPermission = OnCallPermission | StudentPermission;
+
+const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
+  ADMIN: ["oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel", "import:write", "students:read", "students:write"],
+  SLT: ["oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "import:write", "students:read", "students:write"],
+  LEADER: ["oncall:create", "oncall:cancel", "students:read"],
+  TEACHER: ["oncall:create", "oncall:cancel", "students:read"],
+  HR: ["oncall:create", "import:write", "students:read"],
   ON_CALL: ["oncall:acknowledge", "oncall:resolve", "oncall:view_all"],
 };
 
 export function hasOnCallPermission(role: UserRole, permission: OnCallPermission): boolean {
+  return ROLE_PERMISSIONS[role]?.includes(permission) ?? false;
+}
+
+export function hasPermission(role: UserRole, permission: AppPermission): boolean {
   return ROLE_PERMISSIONS[role]?.includes(permission) ?? false;
 }

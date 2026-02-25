@@ -1,7 +1,7 @@
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature, requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
-import { SignalKey } from "@prisma/client";
+import { SignalKey } from "@/modules/observations/signalDefinitions";
 
 export type TenantSignalLabelMap = Partial<Record<SignalKey, { displayName: string; description?: string }>>;
 
@@ -13,7 +13,8 @@ export async function getTenantSignalLabels(tenantId: string): Promise<TenantSig
   const rows = await (prisma as any).tenantSignalLabel.findMany({ where: { tenantId } });
   const map: TenantSignalLabelMap = {};
   for (const row of rows as any[]) {
-    map[row.signalKey] = { displayName: row.displayName, ...(row.description ? { description: row.description } : {}) };
+    const signalKey = row.signalKey as SignalKey;
+    map[signalKey] = { displayName: row.displayName, ...(row.description ? { description: row.description } : {}) };
   }
   return map;
 }

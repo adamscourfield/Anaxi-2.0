@@ -1,4 +1,28 @@
-import { LessonPhase, SignalKey } from "@prisma/client";
+export const LESSON_PHASE = {
+  INSTRUCTION: "INSTRUCTION",
+  GUIDED_PRACTICE: "GUIDED_PRACTICE",
+  INDEPENDENT_PRACTICE: "INDEPENDENT_PRACTICE",
+  UNKNOWN: "UNKNOWN",
+} as const;
+
+export type LessonPhase = (typeof LESSON_PHASE)[keyof typeof LESSON_PHASE];
+
+export const SIGNAL_KEYS = {
+  BEHAVIOUR_CLIMATE: "BEHAVIOUR_CLIMATE",
+  PARTICIPATION_EQUITY: "PARTICIPATION_EQUITY",
+  PACE_MOMENTUM: "PACE_MOMENTUM",
+  COLD_CALL_DENSITY: "COLD_CALL_DENSITY",
+  CFU_CYCLES: "CFU_CYCLES",
+  ERROR_CORRECTION_DEPTH: "ERROR_CORRECTION_DEPTH",
+  MODELLING_EXPLICITNESS: "MODELLING_EXPLICITNESS",
+  LANGUAGE_PRECISION: "LANGUAGE_PRECISION",
+  LIVE_ADJUSTMENT: "LIVE_ADJUSTMENT",
+  RETRIEVAL_PRESENCE: "RETRIEVAL_PRESENCE",
+  STRETCH_DEPLOYMENT: "STRETCH_DEPLOYMENT",
+  INDEPENDENT_ACCOUNTABILITY: "INDEPENDENT_ACCOUNTABILITY",
+} as const;
+
+export type SignalKey = (typeof SIGNAL_KEYS)[keyof typeof SIGNAL_KEYS];
 
 export type ScaleKey = "LIMITED" | "SOME" | "CONSISTENT" | "STRONG";
 
@@ -31,12 +55,12 @@ export const GLOBAL_SCALE: SignalDefinition["scale"] = [
 
 export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
   {
-    key: SignalKey.BEHAVIOUR_CLIMATE,
+    key: SIGNAL_KEYS.BEHAVIOUR_CLIMATE,
     order: 1,
     displayNameDefault: "Behaviour & Focus",
     descriptionDefault:
       "Students are attentive, routines are secure, and learning time is protected. Transitions are calm and expectations are consistently reinforced.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.INDEPENDENT_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.INDEPENDENT_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -53,12 +77,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     ],
   },
   {
-    key: SignalKey.PARTICIPATION_EQUITY,
+    key: SIGNAL_KEYS.PARTICIPATION_EQUITY,
     order: 2,
     displayNameDefault: "Participation & Thinking Ratio",
     descriptionDefault:
       "A wide range of students are required to think and respond. Participation is not dominated by volunteers. Cold call is used deliberately.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -74,12 +98,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     ],
   },
   {
-    key: SignalKey.PACE_MOMENTUM,
+    key: SIGNAL_KEYS.PACE_MOMENTUM,
     order: 3,
     displayNameDefault: "Pace & Lesson Momentum",
     descriptionDefault:
       "The lesson moves forward with purpose. Transitions are efficient and students remain cognitively engaged.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.INDEPENDENT_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.INDEPENDENT_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -91,12 +115,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Clear time expectations", "Fast transitions between tasks", "No extended dead time / waiting", "Students move quickly into work"],
   },
   {
-    key: SignalKey.COLD_CALL_DENSITY,
+    key: SIGNAL_KEYS.COLD_CALL_DENSITY,
     order: 4,
     displayNameDefault: "Cold Call & Directed Questioning",
     descriptionDefault:
       "Students are routinely and unpredictably asked to respond. Questioning checks understanding across the class, not just a few voices.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: false,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -108,12 +132,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Cold call used routinely", "Teacher checks multiple students per concept", "Students expected to answer in full sentences where appropriate"],
   },
   {
-    key: SignalKey.CFU_CYCLES,
+    key: SIGNAL_KEYS.CFU_CYCLES,
     order: 5,
     displayNameDefault: "Checking for Understanding",
     descriptionDefault:
       "The teacher regularly checks for understanding before moving on and adapts instruction if misconceptions appear.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: false,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -125,12 +149,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Checks happen before moving to the next step", "Teacher uses checks to adapt instruction", "Misconceptions are surfaced early"],
   },
   {
-    key: SignalKey.ERROR_CORRECTION_DEPTH,
+    key: SIGNAL_KEYS.ERROR_CORRECTION_DEPTH,
     order: 6,
     displayNameDefault: "Error Correction & Feedback",
     descriptionDefault:
       "Misconceptions are addressed clearly and precisely. Students are required to correct and secure understanding.",
-    phaseRelevance: [LessonPhase.GUIDED_PRACTICE, LessonPhase.INDEPENDENT_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.INDEPENDENT_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -142,12 +166,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Teacher identifies the specific error (not just 'wrong')", "Correction is modelled or explained clearly", "Student re-attempts or articulates corrected understanding"],
   },
   {
-    key: SignalKey.MODELLING_EXPLICITNESS,
+    key: SIGNAL_KEYS.MODELLING_EXPLICITNESS,
     order: 7,
     displayNameDefault: "Explicit Modelling",
     descriptionDefault:
       "New knowledge or processes are clearly demonstrated. The thinking process is made visible before students practise independently.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.UNKNOWN],
     isUniversal: false,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -159,12 +183,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Teacher demonstrates a worked example / exemplar", "Steps and decisions are explained explicitly", "Students know what success looks like before starting"],
   },
   {
-    key: SignalKey.LANGUAGE_PRECISION,
+    key: SIGNAL_KEYS.LANGUAGE_PRECISION,
     order: 8,
     displayNameDefault: "Language & Explanation Clarity",
     descriptionDefault:
       "Subject vocabulary is used accurately and explanations are clear, structured, and free from ambiguity.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -176,12 +200,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Key terms defined and used accurately", "Explanations are step-by-step", "Students required to use correct vocabulary"],
   },
   {
-    key: SignalKey.LIVE_ADJUSTMENT,
+    key: SIGNAL_KEYS.LIVE_ADJUSTMENT,
     order: 9,
     displayNameDefault: "Responsive Teaching",
     descriptionDefault:
       "Instruction adjusts in response to student understanding. The teacher slows down, re-explains, or extends as needed.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.GUIDED_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -193,12 +217,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Teacher changes approach based on student responses", "Misunderstanding triggers reteach or re-model", "Teacher extends where understanding is secure"],
   },
   {
-    key: SignalKey.RETRIEVAL_PRESENCE,
+    key: SIGNAL_KEYS.RETRIEVAL_PRESENCE,
     order: 10,
     displayNameDefault: "Retrieval & Recall",
     descriptionDefault:
       "Students are required to recall previously taught material. Retrieval strengthens long-term memory and connects prior learning.",
-    phaseRelevance: [LessonPhase.INSTRUCTION, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INSTRUCTION, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -210,12 +234,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Do Now / retrieval task is used", "Prior learning is revisited explicitly", "Teacher checks recall (not just sets questions)"],
   },
   {
-    key: SignalKey.STRETCH_DEPLOYMENT,
+    key: SIGNAL_KEYS.STRETCH_DEPLOYMENT,
     order: 11,
     displayNameDefault: "Stretch & Challenge",
     descriptionDefault:
       "Students are pushed to deepen thinking, extend answers, and apply knowledge beyond surface-level responses.",
-    phaseRelevance: [LessonPhase.GUIDED_PRACTICE, LessonPhase.INDEPENDENT_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.INDEPENDENT_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: true,
     scale: GLOBAL_SCALE,
     scaleGuidance: {
@@ -227,12 +251,12 @@ export const SIGNAL_DEFINITIONS: SignalDefinition[] = [
     lookFors: ["Teacher presses for 'why' / 'how' not just 'what'", "Students required to justify or apply", "Tasks/questions increase in sophistication"],
   },
   {
-    key: SignalKey.INDEPENDENT_ACCOUNTABILITY,
+    key: SIGNAL_KEYS.INDEPENDENT_ACCOUNTABILITY,
     order: 12,
     displayNameDefault: "Independent Practice & Accountability",
     descriptionDefault:
       "Students practise independently with clear expectations. Work is monitored and misconceptions are identified promptly.",
-    phaseRelevance: [LessonPhase.INDEPENDENT_PRACTICE, LessonPhase.GUIDED_PRACTICE, LessonPhase.UNKNOWN],
+    phaseRelevance: [LESSON_PHASE.INDEPENDENT_PRACTICE, LESSON_PHASE.GUIDED_PRACTICE, LESSON_PHASE.UNKNOWN],
     isUniversal: false,
     scale: GLOBAL_SCALE,
     scaleGuidance: {

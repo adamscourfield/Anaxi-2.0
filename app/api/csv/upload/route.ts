@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 import { parseStudentCsv } from "@/modules/students/csv";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserOrThrow } from "@/lib/auth";
+import { requireFeature, requireRole } from "@/lib/guards";
 
 export async function POST(req: Request) {
   const user = await getSessionUserOrThrow();
+  await requireFeature(user.tenantId, "STUDENTS");
+  requireRole(user, ["LEADER", "SLT", "ADMIN"]);
+
   const form = await req.formData();
   const csvFile = form.get("file") as File | null;
   const snapshotDateRaw = String(form.get("snapshotDate") || "");
@@ -19,15 +23,15 @@ export async function POST(req: Request) {
     if (!row.externalId) errors.push(`Row ${idx + 1}: externalId missing`);
   });
 
-  const status = errors.length ? "FAILED" : "COMPLETED";
   await prisma.importJob.create({
     data: {
       tenantId: user.tenantId,
-      module: "students",
-      status,
-      summary: `rows=${parsed.length} snapshotDate=${snapshotDateRaw}`,
-      errorText: errors.join("; ") || null,
-      finishedAt: new Date()
+      type: "STUDENTS_SNAPSHOT",
+      status: errors.length ? "FAILED" : "COMPLETED",
+      uploadedBy: user.id,
+      fileName: csvFile.name,
+      rowCount: parsed.length,
+      errorSummary: errors.length ? errors.join("; ") : null
     }
   });
 

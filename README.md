@@ -95,3 +95,24 @@ If you run on Replit, set `NEXTAUTH_URL` to your Replit app URL (e.g. `https://<
   - LOA scoped approval permissions (approve LOAs for specific staff)
   - On Call email permission (`receivesOnCallEmails`)
 - LOA approvals block self-approval and enforce approver scope rules.
+
+## Design System
+- Brand words: deliberate, calm, transparent.
+- Font: Inter (400/500/600/700) via `next/font/google`.
+- Accent: `#fe9f9f` for selection/highlight only.
+- Primary button: deep slate (`#0F172A`) with hover/active slate variants.
+- Radius: 14px (large), 10px (small).
+- Motion: 150–220ms ease-out (`.calm-transition`).
+
+### Example usage
+```tsx
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { TileOption } from "@/components/ui/tile-option";
+
+<Card>
+  <Button>Save</Button>
+  <Button variant="secondary">Cancel</Button>
+  <TileOption selected>Consistent</TileOption>
+</Card>
+```

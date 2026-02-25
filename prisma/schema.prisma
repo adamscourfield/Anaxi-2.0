@@ -29,6 +29,7 @@ enum ImportJobType {
   STUDENTS_SNAPSHOT
   STUDENT_SUBJECT_TEACHERS
   STAFF_IMPORT
+  TIMETABLE
 }
 
 enum ImportJobStatus {
@@ -606,8 +607,13 @@ model TimetableEntry {
   room               String?
   dayOfWeek          Int?
   period             String?
+  weekPattern        String?
+  startTime          String?
+  endTime            String?
+  slotKey            String?
   createdAt          DateTime @default(now())
 
+  @@unique([tenantId, classCode, slotKey])
   @@index([tenantId, yearGroup, subject, classCode])
 }
 
@@ -622,6 +628,7 @@ model TimetableImportJob {
   rowsProcessed   Int      @default(0)
   rowsFailed      Int      @default(0)
   errorReportJson Json?
+  conflictsJson   Json?
   createdAt       DateTime @default(now())
   finishedAt      DateTime?
 

@@ -1,1 +1,49 @@
-// Current content of schema.prisma will be fetched here
+enum InsightType {
+  DRIFT_DOWN
+  DRIFT_UP
+  HOTSPOT
+  COVERAGE_GAP
+  BEHAVIOUR_SPIKE
+  TRIANGULATED_RISK
+}
+
+enum InsightScope {
+  WHOLE_SCHOOL
+  YEAR
+  SUBJECT
+  TEACHER
+}
+
+model Insight {
+  id                String        @id @default(cuid())
+  tenantId          String
+  tenant            Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  type              InsightType
+  scope             InsightScope
+  yearGroup         String?
+  subject           String?
+  teacherId         String?
+  teacher           User?         @relation("InsightTeacher", fields: [teacherId], references: [id])
+  signalKey         SignalKey?
+  windowDays        Int           @default(21)
+  startDate         DateTime
+  endDate           DateTime
+  metricValue       Float
+  deltaValue        Float
+  observationCount  Int
+  severity          Int           @default(1)
+  title             String
+  summary           String
+  linkPath          String
+  createdAt         DateTime      @default(now())
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, type])
+  @@index([tenantId, severity, createdAt])
+}
+
+// Add the relations to the Tenant and User models
+// In Tenant model
+// insights          Insight[]
+// In User model
+// insightsAsTeacher Insight[] @relation("InsightTeacher")

@@ -24,7 +24,7 @@ export default function LoginPage() {
       }
       return;
     }
-    router.push(res?.url || "/tenant");
+    router.push(res?.url || "/home");
     router.refresh();
   }
 

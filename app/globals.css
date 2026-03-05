@@ -5,10 +5,11 @@
 :root {
   --bg: #f8f8f8;
   --surface: #ffffff;
+  --surface-subtle: #f3f4f6;
   --text: #111827;
   --text-muted: #4b5563;
   --border: #e5e7eb;
-  --divider: #f1f5f9;
+  --divider: #eef2f7;
 
   --accent: #fe9f9f;
   --accent-hover: #f48b8b;

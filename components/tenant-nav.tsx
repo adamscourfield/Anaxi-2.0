@@ -101,7 +101,7 @@ export function TenantNav({
           const sectionHasCurrent = section.items.some((item) => pathname?.startsWith(item.href));
 
           return (
-            <details key={section.label} open={sectionHasCurrent || !collapsed} className="rounded-lg border border-border/70 bg-bg/30">
+            <details key={section.label} open={sectionHasCurrent || !collapsed} className="rounded-lg border border-border/70 bg-[var(--surface-subtle)]">
               <summary className="cursor-pointer list-none px-3 py-2 font-medium text-text">
                 {collapsed ? section.label.slice(0, 1) : section.label}
               </summary>

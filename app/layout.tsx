@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.className}>
       <body className="bg-bg text-text">
-        <header className="border-b border-border bg-surface">
+        <header className="border-b border-border bg-[var(--surface-subtle)]">
           <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 py-4">
             <Link href="/" className="text-[18px] font-semibold">Anaxi</Link>
             <form action="/api/auth/signout" method="post">

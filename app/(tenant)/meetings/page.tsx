@@ -4,6 +4,9 @@ import { requireFeature } from "@/lib/guards";
 import { hasPermission } from "@/lib/rbac";
 import { listMeetings } from "@/modules/meetings/service";
 import { MeetingCard } from "@/components/meetings/MeetingCard";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default async function MeetingsPage({ searchParams }: { searchParams?: { scope?: string; type?: string } }) {
   const user = await getSessionUserOrThrow();
@@ -24,39 +27,42 @@ export default async function MeetingsPage({ searchParams }: { searchParams?: { 
   const past = (meetings as any[]).filter((m) => new Date(m.startDateTime) < now);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Meetings</h1>
-        {hasPermission(user.role, "meetings:create") && (
-          <Link href="/tenant/meetings/new" className="rounded-lg bg-primaryBtn px-4 py-2 text-sm font-medium text-white hover:bg-primaryBtnHover">
-            New Meeting
-          </Link>
-        )}
-      </div>
+    <div className="space-y-5">
+      <PageHeader
+        title="Meetings"
+        subtitle="Track upcoming conversations, outcomes, and follow-up actions."
+        actions={
+          hasPermission(user.role, "meetings:create") ? (
+            <Link href="/tenant/meetings/new">
+              <Button>New meeting</Button>
+            </Link>
+          ) : null
+        }
+      />
 
-      <div className="flex gap-3 text-sm">
-        <Link className="underline opacity-70 hover:opacity-100" href="/tenant/meetings/actions">My Actions</Link>
+      <div className="flex flex-wrap gap-2 text-sm">
+        <Link className="rounded-md border border-border/80 px-3 py-1.5 hover:bg-divider/60" href="/tenant/meetings/actions">My actions</Link>
         {canViewAll && (
           <>
-            <Link className={`underline ${!showAll ? "font-medium" : "opacity-70 hover:opacity-100"}`} href="/tenant/meetings?scope=mine">Mine</Link>
-            <Link className={`underline ${showAll ? "font-medium" : "opacity-70 hover:opacity-100"}`} href="/tenant/meetings?scope=all">All</Link>
+            <Link className={`rounded-md border px-3 py-1.5 ${!showAll ? "border-accent bg-[var(--accent-tint)] text-text" : "border-border/80 text-muted hover:bg-divider/60 hover:text-text"}`} href="/tenant/meetings?scope=mine">Mine</Link>
+            <Link className={`rounded-md border px-3 py-1.5 ${showAll ? "border-accent bg-[var(--accent-tint)] text-text" : "border-border/80 text-muted hover:bg-divider/60 hover:text-text"}`} href="/tenant/meetings?scope=all">All</Link>
           </>
         )}
       </div>
 
-      <section>
-        <h2 className="mb-2 font-medium">Upcoming</h2>
+      <section className="space-y-2">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-muted">Upcoming</h2>
         <div className="space-y-2">
           {upcoming.map((m: any) => <MeetingCard key={m.id} meeting={m} />)}
-          {upcoming.length === 0 && <p className="text-sm opacity-60">No upcoming meetings.</p>}
+          {upcoming.length === 0 && <EmptyState title="No upcoming meetings" description="Create a meeting to start capturing decisions and actions." />}
         </div>
       </section>
 
-      <section>
-        <h2 className="mb-2 font-medium">Past</h2>
+      <section className="space-y-2">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-muted">Past</h2>
         <div className="space-y-2">
           {past.map((m: any) => <MeetingCard key={m.id} meeting={m} />)}
-          {past.length === 0 && <p className="text-sm opacity-60">No past meetings.</p>}
+          {past.length === 0 && <EmptyState title="No past meetings" description="Completed meetings will appear here for easy reference." />}
         </div>
       </section>
     </div>

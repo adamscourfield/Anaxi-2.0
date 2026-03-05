@@ -46,16 +46,16 @@ export function OnCallRequestCard({ request, canAcknowledge, canResolve }: OnCal
       </div>
       <div className="flex shrink-0 flex-col items-end gap-2">
         <Link href={`/tenant/on-call/${request.id}`}>
-          <Button variant="secondary" className="text-xs px-3 py-1.5">View</Button>
+          <Button variant="secondary" className="px-3 py-1.5 text-xs">View</Button>
         </Link>
         {canAcknowledge && request.status === "OPEN" && (
           <form method="POST" action={`/api/oncall/${request.id}/acknowledge`}>
-            <Button type="submit" className="text-xs px-3 py-1.5">Acknowledge</Button>
+            <Button type="submit" className="px-3 py-1.5 text-xs">Acknowledge</Button>
           </form>
         )}
         {canResolve && (request.status === "OPEN" || request.status === "ACKNOWLEDGED") && (
           <form method="POST" action={`/api/oncall/${request.id}/resolve`}>
-            <Button type="submit" variant="secondary" className="text-xs px-3 py-1.5">Resolve</Button>
+            <Button type="submit" variant="secondary" className="px-3 py-1.5 text-xs">Resolve</Button>
           </form>
         )}
       </div>

@@ -2,20 +2,41 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FeatureKey, UserRole } from "@/lib/types";
 
 type NavItem = {
   label: string;
   href: string;
-  icon: string;
   badgeCount?: number;
+  icon: string;
 };
 
-type NavGroup = {
+type NavSection = {
   label: string;
   items: NavItem[];
 };
+
+function iconFor(href: string) {
+  if (href === "/home") return "◻";
+  if (href === "/my-actions") return "✓";
+  if (href.includes("/observe/history")) return "◷";
+  if (href.includes("/observe")) return "◎";
+  if (href.includes("/explorer")) return "◌";
+  if (href.includes("/students")) return "◍";
+  if (href.includes("/behaviour/import")) return "⇢";
+  if (href.includes("/on-call")) return "⚑";
+  if (href.includes("/meetings")) return "◫";
+  if (href.includes("/leave")) return "◐";
+  if (href.includes("/analysis/teachers")) return "△";
+  if (href.includes("/analysis/cpd")) return "◇";
+  if (href.includes("/analysis/students")) return "▽";
+  if (href.includes("/admin/users")) return "◔";
+  if (href.includes("/admin/departments")) return "▦";
+  if (href.includes("/admin/features")) return "◩";
+  if (href.includes("/admin")) return "□";
+  return "•";
+}
 
 export function TenantNav({
   role,
@@ -29,110 +50,127 @@ export function TenantNav({
   leaveCount?: number;
 }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   const has = (feature: FeatureKey) => enabledFeatures.includes(feature);
   const canImport = role === "SLT" || role === "ADMIN";
 
-  const groups = useMemo<NavGroup[]>(() => {
-    const overview: NavGroup = {
+  const navItem = (label: string, href: string, badgeCount?: number): NavItem => ({
+    label,
+    href,
+    badgeCount,
+    icon: iconFor(href),
+  });
+
+  const sections: NavSection[] = [
+    {
       label: "Overview",
+      items: [navItem("Home", "/home"), navItem("My actions", "/my-actions")],
+    },
+    {
+      label: "Observations",
       items: [
-        { label: "Home", href: "/home", icon: "⌂" },
-        { label: "My actions", href: "/my-actions", icon: "✓" },
+        ...(has("OBSERVATIONS") ? [navItem("Observation feed", "/tenant/observe")] : []),
+        ...(has("OBSERVATIONS") ? [navItem("Signals history", "/tenant/observe/history")] : []),
+        ...(has("ANALYSIS") ? [navItem("Explorer", "/explorer")] : []),
       ],
-    };
-
-    const teaching: NavGroup = {
-      label: "Teaching",
+    },
+    {
+      label: "Students & conduct",
       items: [
-        ...(has("OBSERVATIONS") ? [{ label: "Observe", href: "/observe", icon: "◉" }] : []),
-        ...(has("OBSERVATIONS") ? [{ label: "Signals", href: "/observe/history", icon: "◌" }] : []),
-        ...(has("ANALYSIS") ? [{ label: "Explorer", href: "/explorer", icon: "◎" }] : []),
-        ...(has("ANALYSIS") ? [{ label: "Teacher analysis", href: "/analysis/teachers", icon: "◍" }] : []),
-        ...(has("ANALYSIS") ? [{ label: "Student priorities", href: "/analysis/students", icon: "◈" }] : []),
+        ...(has("STUDENTS") ? [navItem("Students", "/tenant/students")] : []),
+        ...(has("STUDENTS_IMPORT") && canImport ? [navItem("Behaviour import", "/tenant/behaviour/import")] : []),
       ],
-    };
-
-    const operations: NavGroup = {
-      label: "Operations",
+    },
+    {
+      label: "Pastoral workflows",
       items: [
-        ...(has("STUDENTS") ? [{ label: "Students", href: "/students", icon: "◫" }] : []),
-        ...(has("STUDENTS_IMPORT") && canImport ? [{ label: "Import", href: "/behaviour/import", icon: "⇪" }] : []),
-        ...(has("ON_CALL") ? [{ label: "On call", href: "/on-call", icon: "!", badgeCount: onCallCount }] : []),
-        ...(has("MEETINGS") ? [{ label: "Meetings", href: "/meetings", icon: "✦" }] : []),
-        ...(has("LEAVE") ? [{ label: "Leave", href: "/leave", icon: "◔", badgeCount: leaveCount }] : []),
+        ...(has("ON_CALL") ? [navItem("On call", "/tenant/on-call", onCallCount)] : []),
+        ...(has("MEETINGS") ? [navItem("Meetings", "/tenant/meetings")] : []),
+        ...(has("LEAVE") ? [navItem("Leave of absence", "/tenant/leave", leaveCount)] : []),
       ],
-    };
-
-    const admin: NavGroup = {
-      label: "Admin",
-      items: role === "ADMIN" && has("ADMIN") ? [{ label: "Dashboard", href: "/admin", icon: "⚙" }] : [],
-    };
-
-    return [overview, teaching, operations, admin].filter((g) => g.items.length > 0);
-  }, [enabledFeatures, leaveCount, onCallCount, role]);
+    },
+    {
+      label: "Analytics",
+      items: [
+        ...(has("ANALYSIS") ? [navItem("Teacher analysis", "/analysis/teachers")] : []),
+        ...(has("ANALYSIS") ? [navItem("CPD priorities", "/analysis/cpd")] : []),
+        ...(has("ANALYSIS") ? [navItem("Student priorities", "/analysis/students")] : []),
+      ],
+    },
+    {
+      label: "Administration",
+      items: [
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Admin dashboard", "/tenant/admin")] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("User management", "/tenant/admin/users")] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Departments", "/tenant/admin/departments")] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Feature flags", "/tenant/admin/features")] : []),
+      ],
+    },
+  ].filter((section) => section.items.length > 0);
 
   return (
     <aside
-      className={`sticky top-4 h-[calc(100vh-2rem)] overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm calm-transition ${
-        collapsed ? "w-[86px]" : "w-[290px]"
+      className={`sticky top-4 h-fit rounded-2xl border border-border/80 bg-surface/95 p-3 shadow-sm backdrop-blur-sm calm-transition ${
+        collapsed ? "w-[220px]" : "w-full md:w-[292px]"
       }`}
       aria-label="Sidebar menu"
     >
-      <div className="flex h-full flex-col p-3">
-        <div className="mb-3 flex items-center gap-2 rounded-xl bg-[var(--surface-subtle)] p-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-lg">⌁</div>
-          {!collapsed && <span className="text-sm font-semibold">Anaxi Observe</span>}
-        </div>
+      <button
+        onClick={() => setCollapsed((previous) => !previous)}
+        className="mb-3 w-full rounded-lg border border-border/80 bg-bg/20 px-3 py-2 text-left text-xs font-medium text-muted hover:bg-divider/70"
+        type="button"
+        aria-expanded={!collapsed}
+      >
+        {collapsed ? "Expand menu" : "Collapse menu"}
+      </button>
 
-        <nav className="flex-1 space-y-3 overflow-y-auto pr-1">
-          {groups.map((group) => (
-            <div key={group.label} className="space-y-1">
-              {!collapsed && <p className="px-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted">{group.label}</p>}
-              {group.items.map((item) => {
-                const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    title={collapsed ? item.label : undefined}
-                    aria-label={item.label}
-                    className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm calm-transition ${
-                      active
-                        ? "bg-primaryBtn text-white shadow-sm"
-                        : "text-muted hover:bg-[var(--surface-subtle)] hover:text-text"
-                    }`}
-                  >
-                    <span className="flex h-5 w-5 items-center justify-center text-base">{item.icon}</span>
-                    {!collapsed && <span className="truncate">{item.label}</span>}
-                    {!collapsed && item.badgeCount && item.badgeCount > 0 ? (
-                      <span className={`ml-auto rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/25 text-white" : "bg-amber-500 text-white"}`}>
-                        {item.badgeCount}
-                      </span>
-                    ) : null}
+      <nav className="space-y-2 text-sm">
+        {sections.map((section) => {
+          const sectionHasCurrent = section.items.some((item) => pathname?.startsWith(item.href));
 
-                    {collapsed && (
-                      <span className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-30 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-text shadow-md group-hover:block">
-                        {item.label}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
+          return (
+            <details key={section.label} open={sectionHasCurrent || !collapsed} className="overflow-hidden rounded-xl border border-border/70 bg-bg/20">
+              <summary className="cursor-pointer list-none px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">
+                {section.label}
+              </summary>
+              <ul className="space-y-1.5 border-t border-border/60 px-2 py-2">
+                {section.items.map((item) => {
+                  const active = pathname?.startsWith(item.href);
 
-        <button
-          onClick={() => setCollapsed((prev) => !prev)}
-          className="mt-3 flex items-center justify-center gap-2 rounded-lg border border-border bg-[var(--surface-subtle)] px-3 py-2 text-xs text-muted hover:bg-divider"
-          type="button"
-        >
-          <span className={`inline-block calm-transition ${collapsed ? "rotate-180" : ""}`}>⌃</span>
-          {!collapsed && "Collapse"}
-        </button>
-      </div>
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`group flex items-center justify-between rounded-lg px-2.5 py-2 text-sm calm-transition ${
+                          active
+                            ? "border border-border bg-divider/80 text-text"
+                            : "border border-transparent text-muted hover:border-border/60 hover:bg-divider/60 hover:text-text"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <span
+                            className={`inline-flex h-6 w-6 items-center justify-center rounded-md border text-[11px] font-semibold ${
+                              active ? "border-border bg-surface text-text" : "border-border/80 bg-bg text-muted group-hover:text-text"
+                            }`}
+                            aria-hidden
+                          >
+                            {item.icon}
+                          </span>
+                          <span className="font-medium tracking-[0.01em]">{item.label}</span>
+                        </span>
+                        {item.badgeCount && item.badgeCount > 0 ? (
+                          <span className="rounded-full bg-warning px-1.5 py-0.5 text-[11px] font-semibold text-bg">{item.badgeCount}</span>
+                        ) : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </details>
+          );
+        })}
+      </nav>
     </aside>
   );
 }

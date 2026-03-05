@@ -5,7 +5,7 @@ import { hasOnCallPermission } from "@/lib/rbac";
 import { getRequestsByStatus } from "@/modules/oncall/service";
 import { OnCallInbox } from "@/components/oncall/OnCallInbox";
 import { Button } from "@/components/ui/button";
-import { H1 } from "@/components/ui/typography";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default async function OnCallHomePage() {
   const user = await getSessionUserOrThrow();
@@ -18,12 +18,15 @@ export default async function OnCallHomePage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <H1>On Call</H1>
-        <Link href="/tenant/on-call/new">
-          <Button>New Request</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="On call"
+        subtitle="Triage incidents quickly and keep response ownership clear."
+        actions={
+          <Link href="/tenant/on-call/new">
+            <Button>New request</Button>
+          </Link>
+        }
+      />
 
       <OnCallInbox
         requests={requests as any[]}

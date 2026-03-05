@@ -111,14 +111,14 @@ export function TenantNav({
 
   return (
     <aside
-      className={`sticky top-4 h-fit rounded-2xl border border-border bg-surface p-3 shadow-sm calm-transition ${
+      className={`sticky top-4 h-fit rounded-2xl border border-border/80 bg-surface/95 p-3 shadow-sm backdrop-blur-sm calm-transition ${
         collapsed ? "w-[220px]" : "w-full md:w-[292px]"
       }`}
       aria-label="Sidebar menu"
     >
       <button
         onClick={() => setCollapsed((previous) => !previous)}
-        className="mb-3 w-full rounded-lg border border-border px-3 py-2 text-left text-xs text-muted hover:bg-divider"
+        className="mb-3 w-full rounded-lg border border-border/80 bg-bg/20 px-3 py-2 text-left text-xs font-medium text-muted hover:bg-divider/70"
         type="button"
         aria-expanded={!collapsed}
       >
@@ -130,8 +130,8 @@ export function TenantNav({
           const sectionHasCurrent = section.items.some((item) => pathname?.startsWith(item.href));
 
           return (
-            <details key={section.label} open={sectionHasCurrent || !collapsed} className="rounded-xl border border-border/70 bg-bg/20">
-              <summary className="cursor-pointer list-none px-3 py-2 text-xs font-medium text-muted">
+            <details key={section.label} open={sectionHasCurrent || !collapsed} className="overflow-hidden rounded-xl border border-border/70 bg-bg/20">
+              <summary className="cursor-pointer list-none px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">
                 {section.label}
               </summary>
               <ul className="space-y-1.5 border-t border-border/60 px-2 py-2">
@@ -144,7 +144,7 @@ export function TenantNav({
                         href={item.href}
                         className={`group flex items-center justify-between rounded-lg px-2.5 py-2 text-sm calm-transition ${
                           active
-                            ? "border border-border bg-divider/70 text-text"
+                            ? "border border-border bg-divider/80 text-text"
                             : "border border-transparent text-muted hover:border-border/60 hover:bg-divider/60 hover:text-text"
                         }`}
                       >
@@ -160,7 +160,7 @@ export function TenantNav({
                           <span className="font-medium tracking-[0.01em]">{item.label}</span>
                         </span>
                         {item.badgeCount && item.badgeCount > 0 ? (
-                          <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-xs text-white">{item.badgeCount}</span>
+                          <span className="rounded-full bg-warning px-1.5 py-0.5 text-[11px] font-semibold text-bg">{item.badgeCount}</span>
                         ) : null}
                       </Link>
                     </li>

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { ActionCard } from "./ActionCard";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Status = "OPEN" | "BLOCKED" | "DONE";
 
@@ -63,15 +64,7 @@ export function MyActionsGrouped({ grouped: initial, currentUserId }: MyActionsG
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 text-sm">
-        <span className="text-2xl font-bold text-text">{openCount}</span>
-        <span className="self-end text-sm opacity-70">open action{openCount !== 1 ? "s" : ""}</span>
-        {blockedCount > 0 && (
-          <span className="self-end text-sm font-medium text-yellow-600">{blockedCount} blocked</span>
-        )}
-      </div>
-
-      <div className="flex gap-2 border-b border-border">
+      <div className="flex flex-wrap gap-2 border-b border-border pb-2">
         {TABS.map((tab) => {
           const count = tab === "All" ? openCount + blockedCount + doneCount
             : tab === "Open" ? openCount
@@ -81,22 +74,24 @@ export function MyActionsGrouped({ grouped: initial, currentUserId }: MyActionsG
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-3 py-2 text-sm transition-colors ${
+              className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
                 activeTab === tab
-                  ? "border-b-2 border-text font-medium text-text"
-                  : "text-text opacity-60 hover:opacity-100"
+                  ? "border-accent bg-[var(--accent-tint)] text-text"
+                  : "border-border/80 text-muted hover:bg-divider/60 hover:text-text"
               }`}
             >
-              {tab} {count > 0 && <span className="ml-1 text-xs opacity-70">({count})</span>}
+              {tab}
+              <span className="ml-1 text-xs opacity-80">({count})</span>
             </button>
           );
         })}
       </div>
 
       {tabActions.length === 0 ? (
-        <p className="py-6 text-center text-sm opacity-60">
-          {activeTab === "All" ? "No actions assigned to you." : `No ${activeTab.toLowerCase()} actions.`}
-        </p>
+        <EmptyState
+          title={activeTab === "All" ? "No actions assigned to you" : `No ${activeTab.toLowerCase()} actions`}
+          description="Actions created in meetings will appear here."
+        />
       ) : (
         <div className="space-y-2">
           {tabActions.map((action) => (

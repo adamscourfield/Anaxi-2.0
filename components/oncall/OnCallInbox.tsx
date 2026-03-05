@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { OnCallRequestCard } from "./OnCallRequestCard";
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from "@/modules/oncall/types";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Status = "OPEN" | "ACKNOWLEDGED" | "RESOLVED" | "CANCELLED";
 type RequestType = "BEHAVIOUR" | "FIRST_AID";
@@ -45,11 +47,11 @@ export function OnCallInbox({ requests, canAcknowledge, canResolve }: OnCallInbo
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <Card className="flex flex-wrap gap-2 p-3">
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as Status | "")}
-          className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text"
+          className="rounded-md border border-border bg-bg/60 px-3 py-1.5 text-sm text-text"
         >
           <option value="">All statuses</option>
           {(Object.keys(STATUS_LABELS) as Status[]).map((s) => (
@@ -60,17 +62,17 @@ export function OnCallInbox({ requests, canAcknowledge, canResolve }: OnCallInbo
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value as RequestType | "")}
-          className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text"
+          className="rounded-md border border-border bg-bg/60 px-3 py-1.5 text-sm text-text"
         >
           <option value="">All types</option>
           {(Object.keys(REQUEST_TYPE_LABELS) as RequestType[]).map((t) => (
             <option key={t} value={t}>{REQUEST_TYPE_LABELS[t]}</option>
           ))}
         </select>
-      </div>
+      </Card>
 
       {filtered.length === 0 ? (
-        <p className="py-8 text-center text-sm text-muted">No requests found.</p>
+        <EmptyState title="No requests found" description="Adjust filters or create a new on-call request." />
       ) : (
         <div className="space-y-3">
           {filtered.map((r) => (

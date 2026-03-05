@@ -28,11 +28,7 @@ export function ActionCard({ action, currentUserId, onComplete }: ActionCardProp
   const overdue = action.dueDate ? isActionOverdue(new Date(action.dueDate)) : false;
   const isOpen = action.status === "OPEN";
 
-  const borderClass = isOpen && overdue
-    ? "border-red-300 bg-red-50"
-    : isOpen && action.dueDate && !overdue
-    ? ""
-    : "";
+  const emphasisClass = isOpen && overdue ? "border-error/40 bg-error/10" : "";
 
   async function handleComplete() {
     setCompleting(true);
@@ -47,23 +43,23 @@ export function ActionCard({ action, currentUserId, onComplete }: ActionCardProp
   }
 
   return (
-    <Card className={`space-y-1 ${borderClass}`}>
+    <Card className={`space-y-2 ${emphasisClass}`}>
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-medium text-text">{action.description}</p>
         <ActionStatusBadge status={action.status} />
       </div>
-      <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className="opacity-70">{action.owner.fullName}</span>
+      <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
+        <span>{action.owner.fullName}</span>
         <DueDateIndicator dueDate={action.dueDate} status={action.status} />
         {action.meeting && (
-          <Link href={`/tenant/meetings/${action.meeting.id}`} className="underline opacity-60 hover:opacity-100">
+          <Link href={`/tenant/meetings/${action.meeting.id}`} className="font-medium text-accent hover:text-accentHover">
             {action.meeting.title}
           </Link>
         )}
       </div>
       {isOwner && isOpen && (
         <div className="pt-1">
-          <Button variant="secondary" onClick={handleComplete} disabled={completing} className="text-xs py-1 px-3">
+          <Button variant="secondary" onClick={handleComplete} disabled={completing} className="px-3 py-1 text-xs">
             {completing ? "Marking done…" : "✓ Done"}
           </Button>
         </div>

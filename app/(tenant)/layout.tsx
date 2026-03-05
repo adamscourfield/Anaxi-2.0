@@ -27,7 +27,7 @@ export default async function TenantLayout({ children }: { children: React.React
         onCallCount={onCallCount}
         leaveCount={leaveCount}
       />
-      <section className="min-w-0 flex-1 rounded-xl border border-border/70 bg-surface/70 p-4 shadow-sm backdrop-blur-sm lg:p-6">
+      <section className="min-w-0 flex-1 rounded-xl border border-border/80 bg-surface/75 p-4 shadow-sm backdrop-blur-sm lg:p-6">
         {children}
       </section>
     </div>

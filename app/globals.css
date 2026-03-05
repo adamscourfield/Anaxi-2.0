@@ -87,6 +87,22 @@ body {
   box-shadow: 0 0 0 3px rgba(79, 103, 216, 0.14);
 }
 
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  border-color: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(79, 103, 216, 0.55);
+  box-shadow: 0 0 0 3px rgba(79, 103, 216, 0.14);
+}
+
 .calm-transition {
   transition: all 200ms cubic-bezier(0, 0, 0.2, 1);
 }

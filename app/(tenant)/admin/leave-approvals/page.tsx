@@ -109,25 +109,25 @@ export default async function AdminLeaveApprovalsPage() {
           <option value="ALL_STAFF">All staff</option>
           <option value="SELECTED_MEMBERS">Selected members only</option>
         </select>
-        <button type="submit" className="col-span-2 rounded bg-slate-900 px-4 py-2 text-sm text-white">
+        <button type="submit" className="col-span-2 rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">
           Create group
         </button>
       </form>
 
       <div className="space-y-4">
         {(groups as any[]).length === 0 && (
-          <p className="text-sm text-slate-500">No approval groups yet.</p>
+          <p className="text-sm text-muted">No approval groups yet.</p>
         )}
         {(groups as any[]).map((group: any) => {
           const approverIds = new Set<string>((group.approvers as any[]).map((a: any) => a.approverUserId));
           const scopeIds = new Set<string>((group.scopes as any[]).map((s: any) => s.subjectUserId));
 
           return (
-            <div key={group.id} className="rounded border bg-white p-4 shadow-sm">
+            <div key={group.id} className="rounded border bg-surface p-4 shadow-sm">
               <div className="mb-2 flex items-center justify-between">
                 <div>
                   <h2 className="font-semibold">{group.name}</h2>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-muted">
                     Applies to: {group.appliesTo === "ALL_STAFF" ? "All staff" : "Selected members"}
                   </span>
                 </div>
@@ -160,7 +160,7 @@ export default async function AdminLeaveApprovalsPage() {
                         .filter((u: any) => !approverIds.has(u.id))
                         .map((u: any) => <option key={u.id} value={u.id}>{u.fullName}</option>)}
                     </select>
-                    <button type="submit" className="rounded bg-slate-900 px-3 py-1 text-sm text-white">Add</button>
+                    <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-1 text-sm text-white">Add</button>
                   </form>
                 </div>
 
@@ -187,7 +187,7 @@ export default async function AdminLeaveApprovalsPage() {
                           .filter((u: any) => !scopeIds.has(u.id))
                           .map((u: any) => <option key={u.id} value={u.id}>{u.fullName}</option>)}
                       </select>
-                      <button type="submit" className="rounded bg-slate-900 px-3 py-1 text-sm text-white">Add</button>
+                      <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-1 text-sm text-white">Add</button>
                     </form>
                   </div>
                 )}

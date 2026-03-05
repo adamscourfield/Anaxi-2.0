@@ -46,7 +46,7 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Observation History</h1>
 
-      <form className="grid max-w-5xl grid-cols-6 gap-2 rounded border bg-white p-3 text-sm">
+      <form className="grid max-w-5xl grid-cols-6 gap-2 rounded border bg-surface p-3 text-sm">
         {user.role !== "TEACHER" ? (
           <>
             <select name="teacherId" defaultValue={teacherId} className="border p-2">
@@ -63,10 +63,10 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
         <input name="yearGroup" defaultValue={yearGroup} placeholder="Year group" className="border p-2" />
         <input name="from" type="date" defaultValue={from} className="border p-2" />
         <input name="to" type="date" defaultValue={to} className="border p-2" />
-        <button className="rounded bg-slate-900 px-3 py-2 text-white" type="submit">Filter</button>
+        <button className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white" type="submit">Filter</button>
       </form>
 
-      <ul className="space-y-2 rounded border bg-white p-4 text-sm">
+      <ul className="space-y-2 rounded border bg-surface p-4 text-sm">
         {(observations as any[]).map((observation) => (
           <li key={observation.id}>
             <Link className="underline" href={`/tenant/observe/${observation.id}`}>
@@ -74,7 +74,7 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
             </Link>
           </li>
         ))}
-        {observations.length === 0 ? <li className="text-slate-600">No observations found.</li> : null}
+        {observations.length === 0 ? <li className="text-muted">No observations found.</li> : null}
       </ul>
     </div>
   );

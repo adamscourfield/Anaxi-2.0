@@ -114,9 +114,9 @@ export default async function AdminUsersPage() {
           <option>TEACHER</option><option>LEADER</option><option>SLT</option><option>ADMIN</option>
         </select>
         <input name="password" placeholder="Temporary password" className="border p-2" required />
-        <button type="submit" className="col-span-2 rounded bg-slate-900 px-3 py-2 text-white">Create user</button>
+        <button type="submit" className="col-span-2 rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white">Create user</button>
       </form>
-      <table className="w-full border bg-white text-sm">
+      <table className="w-full border bg-surface text-sm">
         <thead>
           <tr className="border-b">
             <th className="p-2 text-left">Name</th>

@@ -139,7 +139,7 @@ export default async function OnboardingPage({
               <option value="Australia/Sydney">Australia/Sydney</option>
             </select>
           </div>
-          <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">
+          <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">
             Next →
           </button>
         </form>
@@ -150,7 +150,7 @@ export default async function OnboardingPage({
           <h2 className="font-semibold">Step 2: Enable modules</h2>
           <div className="grid grid-cols-2 gap-2">
             {ALL_MODULES.map((mod) => (
-              <label key={mod.key} className="flex items-center gap-2 rounded border bg-white p-3 text-sm">
+              <label key={mod.key} className="flex items-center gap-2 rounded border bg-surface p-3 text-sm">
                 <input
                   type="checkbox"
                   name={mod.key}
@@ -162,7 +162,7 @@ export default async function OnboardingPage({
           </div>
           <div className="flex gap-2">
             <a href="/tenant/onboarding?step=1" className="rounded border px-4 py-2 text-sm">← Back</a>
-            <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">Next →</button>
+            <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Next →</button>
           </div>
         </form>
       )}
@@ -170,13 +170,13 @@ export default async function OnboardingPage({
       {step === 3 && (
         <div className="space-y-4">
           <h2 className="font-semibold">Step 3: Upload staff</h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             Use the Users admin page to bulk-import or add staff manually. Come back here when done.
           </p>
           <div className="flex gap-2">
             <a href="/tenant/onboarding?step=2" className="rounded border px-4 py-2 text-sm">← Back</a>
-            <a href="/tenant/admin/users" className="rounded bg-slate-700 px-4 py-2 text-sm text-white">Go to Users</a>
-            <a href="/tenant/onboarding?step=4" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">Next →</a>
+            <a href="/tenant/admin/users" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Go to Users</a>
+            <a href="/tenant/onboarding?step=4" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Next →</a>
           </div>
         </div>
       )}
@@ -187,7 +187,7 @@ export default async function OnboardingPage({
           <div className="grid max-w-lg gap-3">
             {BEHAVIOUR_FIELDS.map((field) => (
               <div key={field.key} className="flex items-center gap-3">
-                <label className="w-52 text-sm text-slate-600">{field.label}</label>
+                <label className="w-52 text-sm text-muted">{field.label}</label>
                 <input
                   name={field.key}
                   defaultValue={settings?.[field.key] ?? field.default}
@@ -199,7 +199,7 @@ export default async function OnboardingPage({
           </div>
           <div className="flex gap-2">
             <a href="/tenant/onboarding?step=3" className="rounded border px-4 py-2 text-sm">← Back</a>
-            <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">Next →</button>
+            <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Next →</button>
           </div>
         </form>
       )}
@@ -207,9 +207,9 @@ export default async function OnboardingPage({
       {step === 5 && (
         <form action={saveSignalLabels} className="space-y-4">
           <h2 className="font-semibold">Step 5: Signal labels</h2>
-          <p className="text-sm text-slate-600">Customise observation signal display names for your school's language.</p>
+          <p className="text-sm text-muted">Customise observation signal display names for your school's language.</p>
           <div className="overflow-x-auto">
-            <table className="w-full border bg-white text-sm">
+            <table className="w-full border bg-surface text-sm">
               <thead>
                 <tr className="border-b">
                   <th className="p-2 text-left">Signal</th>
@@ -243,7 +243,7 @@ export default async function OnboardingPage({
           </div>
           <div className="flex gap-2">
             <a href="/tenant/onboarding?step=4" className="rounded border px-4 py-2 text-sm">← Back</a>
-            <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">Next →</button>
+            <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Next →</button>
           </div>
         </form>
       )}
@@ -251,13 +251,13 @@ export default async function OnboardingPage({
       {step === 6 && (
         <div className="space-y-4">
           <h2 className="font-semibold">Step 6: Timetable upload (optional)</h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             Optionally upload a timetable CSV. This can be done later from the Admin panel.
           </p>
           <div className="flex gap-2">
             <a href="/tenant/onboarding?step=5" className="rounded border px-4 py-2 text-sm">← Back</a>
-            <a href="/tenant/admin/timetable" className="rounded bg-slate-700 px-4 py-2 text-sm text-white">Upload timetable</a>
-            <a href="/tenant/onboarding?step=7" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">Skip →</a>
+            <a href="/tenant/admin/timetable" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Upload timetable</a>
+            <a href="/tenant/onboarding?step=7" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Skip →</a>
           </div>
         </div>
       )}
@@ -265,11 +265,11 @@ export default async function OnboardingPage({
       {step === 7 && (
         <div className="space-y-4">
           <h2 className="font-semibold">Step 7: All done! 🎉</h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             Your school is set up. You can always revisit any settings from the Admin panel.
           </p>
           <form action={finishOnboarding}>
-            <button type="submit" className="rounded bg-slate-900 px-6 py-2 text-sm text-white">
+            <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-6 py-2 text-sm text-white">
               Go to dashboard →
             </button>
           </form>

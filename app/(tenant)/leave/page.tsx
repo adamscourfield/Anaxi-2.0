@@ -25,7 +25,7 @@ export default async function LeavePage() {
         {manager ? <Link className="underline" href="/tenant/leave/pending">Pending approvals</Link> : null}
       </div>
 
-      <div className="rounded border bg-white p-4">
+      <div className="rounded border bg-surface p-4">
         <h2 className="mb-2 font-medium">Recent requests</h2>
         <ul className="space-y-2 text-sm">
           {(requests as any[]).map((request) => (
@@ -35,7 +35,7 @@ export default async function LeavePage() {
               </Link>
             </li>
           ))}
-          {requests.length === 0 ? <li className="text-slate-600">No leave requests yet.</li> : null}
+          {requests.length === 0 ? <li className="text-muted">No leave requests yet.</li> : null}
         </ul>
       </div>
     </div>

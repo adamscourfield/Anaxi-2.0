@@ -66,7 +66,7 @@ export default async function AdminLanguagePage() {
           <div className="grid max-w-lg gap-3">
             {BEHAVIOUR_FIELDS.map((field) => (
               <div key={field.key} className="flex items-center gap-3">
-                <label className="w-52 text-sm text-slate-600">{field.label}</label>
+                <label className="w-52 text-sm text-muted">{field.label}</label>
                 <input
                   name={field.key}
                   defaultValue={settings?.[field.key] ?? field.default}
@@ -76,7 +76,7 @@ export default async function AdminLanguagePage() {
               </div>
             ))}
           </div>
-          <button className="rounded bg-slate-900 px-4 py-2 text-sm text-white" type="submit">
+          <button className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white" type="submit">
             Save behaviour labels
           </button>
         </form>
@@ -86,7 +86,7 @@ export default async function AdminLanguagePage() {
       <section>
         <h2 className="mb-3 text-base font-semibold">Observation signal labels</h2>
         <form action={saveSignalLabels} className="space-y-2">
-          <table className="w-full border bg-white text-sm">
+          <table className="w-full border bg-surface text-sm">
             <thead>
               <tr className="border-b">
                 <th className="p-2 text-left">Signal</th>
@@ -132,7 +132,7 @@ export default async function AdminLanguagePage() {
               })}
             </tbody>
           </table>
-          <button className="rounded bg-slate-900 px-4 py-2 text-sm text-white" type="submit">
+          <button className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white" type="submit">
             Save signal labels
           </button>
         </form>

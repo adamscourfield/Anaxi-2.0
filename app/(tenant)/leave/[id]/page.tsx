@@ -20,7 +20,7 @@ export default async function LeaveDetailPage({ params }: { params: { id: string
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Leave Request</h1>
-      <div className="space-y-1 rounded border bg-white p-4 text-sm">
+      <div className="space-y-1 rounded border bg-surface p-4 text-sm">
         <p><strong>Requester:</strong> {request.requester?.fullName}</p>
         <p><strong>Dates:</strong> {new Date(request.startAt).toLocaleString()} - {new Date(request.endAt).toLocaleString()}</p>
         <p><strong>Reason:</strong> {request.reason?.label}</p>
@@ -31,7 +31,7 @@ export default async function LeaveDetailPage({ params }: { params: { id: string
       </div>
 
       {manager && request.status === "PENDING" ? (
-        <form action={decideLoaRequest} className="grid max-w-2xl grid-cols-2 gap-3 rounded border bg-white p-4">
+        <form action={decideLoaRequest} className="grid max-w-2xl grid-cols-2 gap-3 rounded border bg-surface p-4">
           <input type="hidden" name="requestId" value={request.id} />
           <label className="text-sm">Decision</label>
           <select name="decisionType" className="border p-2" defaultValue="PAID">
@@ -42,7 +42,7 @@ export default async function LeaveDetailPage({ params }: { params: { id: string
 
           <label className="col-span-2 text-sm">Decision notes</label>
           <textarea name="decisionNotes" rows={3} className="col-span-2 border p-2" />
-          <button className="col-span-2 rounded bg-slate-900 px-3 py-2 text-white" type="submit">Save decision</button>
+          <button className="col-span-2 rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white" type="submit">Save decision</button>
         </form>
       ) : null}
     </div>

@@ -43,9 +43,9 @@ export default async function LeaveCalendarPage() {
         {days.map((day) => {
           const entries = (requests as any[]).filter((request) => day >= new Date(request.startAt) && day <= new Date(request.endAt));
           return (
-            <div key={dayKey(day)} className="rounded border bg-white p-3 text-sm">
+            <div key={dayKey(day)} className="rounded border bg-surface p-3 text-sm">
               <p className="font-medium">{day.toLocaleDateString()}</p>
-              {entries.length === 0 ? <p className="text-slate-500">No leave</p> : null}
+              {entries.length === 0 ? <p className="text-muted">No leave</p> : null}
               <ul className="mt-1 space-y-1">
                 {entries.map((request) => (
                   <li key={request.id} className={request.status === "APPROVED" ? "text-emerald-700" : "text-amber-700"}>

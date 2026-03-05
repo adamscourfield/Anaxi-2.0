@@ -44,7 +44,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Rec
         </div>
       </div>
 
-      <form className="grid grid-cols-6 gap-2 rounded border bg-white p-3">
+      <form className="grid grid-cols-6 gap-2 rounded border bg-surface p-3">
         <input name="q" defaultValue={q} placeholder="Search name or UPN" className="col-span-2 border p-2" />
         <input name="yearGroup" defaultValue={yearGroup} placeholder="Year" className="border p-2" />
         <select name="send" defaultValue={send} className="border p-2"><option value="">SEND</option><option value="true">SEND Yes</option><option value="false">SEND No</option></select>
@@ -52,7 +52,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Rec
         <select name="status" defaultValue={status} className="border p-2"><option value="">Status</option><option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option></select>
       </form>
 
-      <table className="w-full border bg-white text-sm">
+      <table className="w-full border bg-surface text-sm">
         <thead><tr className="border-b"><th className="p-2 text-left">UPN</th><th className="p-2 text-left">Name</th><th className="p-2">Year</th><th className="p-2">Attendance</th><th className="p-2">{vocab.detentions.plural}</th><th className="p-2">Active flags</th></tr></thead>
         <tbody>
           {(students as any[]).map((s: any) => {

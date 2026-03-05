@@ -26,7 +26,7 @@ export default async function LeavePendingPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Pending Leave Approvals</h1>
-      <ul className="space-y-2 rounded border bg-white p-4 text-sm">
+      <ul className="space-y-2 rounded border bg-surface p-4 text-sm">
         {(pending as any[]).map((request) => (
           <li key={request.id}>
             <Link className="underline" href={`/tenant/leave/${request.id}`}>
@@ -34,7 +34,7 @@ export default async function LeavePendingPage() {
             </Link>
           </li>
         ))}
-        {pending.length === 0 ? <li className="text-slate-600">No pending requests.</li> : null}
+        {pending.length === 0 ? <li className="text-muted">No pending requests.</li> : null}
       </ul>
     </div>
   );

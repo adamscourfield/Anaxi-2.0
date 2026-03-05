@@ -60,7 +60,7 @@ export default async function AdminCoachingPage() {
 
       <form action={addAssignment} className="grid max-w-lg grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block text-xs text-slate-600">Coach</label>
+          <label className="mb-1 block text-xs text-muted">Coach</label>
           <select name="coachUserId" className="w-full rounded border p-2 text-sm" required>
             <option value="">Select coach…</option>
             {(allUsers as any[]).map((u: any) => (
@@ -69,7 +69,7 @@ export default async function AdminCoachingPage() {
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-600">Coachee</label>
+          <label className="mb-1 block text-xs text-muted">Coachee</label>
           <select name="coacheeUserId" className="w-full rounded border p-2 text-sm" required>
             <option value="">Select coachee…</option>
             {(allUsers as any[]).map((u: any) => (
@@ -79,7 +79,7 @@ export default async function AdminCoachingPage() {
         </div>
         <button
           type="submit"
-          className="col-span-2 rounded bg-slate-900 px-4 py-2 text-sm text-white"
+          className="col-span-2 rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white"
         >
           Add assignment
         </button>
@@ -87,10 +87,10 @@ export default async function AdminCoachingPage() {
 
       <div className="space-y-4">
         {byCoach.size === 0 && (
-          <p className="text-sm text-slate-500">No coaching assignments yet.</p>
+          <p className="text-sm text-muted">No coaching assignments yet.</p>
         )}
         {Array.from(byCoach.values()).map(({ coach, coachees }) => (
-          <div key={coach.id} className="rounded border bg-white p-4 shadow-sm">
+          <div key={coach.id} className="rounded border bg-surface p-4 shadow-sm">
             <h2 className="mb-2 font-semibold">{coach.fullName}</h2>
             <ul className="space-y-1">
               {coachees.map((coachee: any) => (

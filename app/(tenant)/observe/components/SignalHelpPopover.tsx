@@ -14,12 +14,12 @@ export function SignalHelpPopover({
   scaleGuidance: Record<string, string>;
 }) {
   return (
-    <details className="text-xs text-slate-600">
+    <details className="text-xs text-muted">
       <summary className="cursor-pointer select-none">Info</summary>
       <p className="mt-1">{description}</p>
       {lookFors?.length ? (
         <>
-          <p className="mt-2 font-medium text-slate-700">Look-fors</p>
+          <p className="mt-2 font-medium text-muted">Look-fors</p>
           <ul className="mt-1 list-disc pl-4">
             {lookFors.map((lookFor) => (
               <li key={lookFor}>{lookFor}</li>
@@ -27,11 +27,11 @@ export function SignalHelpPopover({
           </ul>
         </>
       ) : null}
-      <p className="mt-2 font-medium text-slate-700">Scale guidance</p>
+      <p className="mt-2 font-medium text-muted">Scale guidance</p>
       <div className="mt-1 space-y-1">
         {options.map((option) => (
           <div key={option.key} className="rounded border p-2">
-            <p className="font-medium text-slate-800">{option.label}</p>
+            <p className="font-medium text-text">{option.label}</p>
             <p>{scaleGuidance[option.key]}</p>
           </div>
         ))}

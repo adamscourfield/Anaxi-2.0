@@ -23,7 +23,7 @@ export default async function AdminFeaturesPage() {
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Features</h1>
       {features.map((f: any) => (
-        <form key={f.key} action={toggleFeature} className="flex items-center gap-3 rounded border bg-white p-3">
+        <form key={f.key} action={toggleFeature} className="flex items-center gap-3 rounded border bg-surface p-3">
           <input type="hidden" name="key" value={f.key} />
           <input type="hidden" name="enabled" value={String(f.enabled)} />
           <span className="w-48 font-medium">{f.key}</span>

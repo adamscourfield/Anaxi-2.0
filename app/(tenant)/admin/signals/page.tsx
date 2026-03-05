@@ -41,7 +41,7 @@ export default async function AdminSignalsPage() {
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Observation Signal Language</h1>
       <form action={saveAll} className="space-y-2">
-        <table className="w-full border bg-white text-sm">
+        <table className="w-full border bg-surface text-sm">
           <thead>
             <tr className="border-b">
               <th className="p-2 text-left">Signal key</th>
@@ -85,7 +85,7 @@ export default async function AdminSignalsPage() {
             })}
           </tbody>
         </table>
-        <button className="rounded bg-slate-900 px-3 py-2 text-white" type="submit">Save all</button>
+        <button className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white" type="submit">Save all</button>
       </form>
     </div>
   );

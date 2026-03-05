@@ -34,7 +34,7 @@ export default async function AdminIndexPage() {
         {!onboardingDone?.onboardingCompletedAt && (
           <Link
             href="/tenant/onboarding"
-            className="rounded bg-slate-900 px-4 py-2 text-sm text-white"
+            className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white"
           >
             Run onboarding wizard →
           </Link>
@@ -46,10 +46,10 @@ export default async function AdminIndexPage() {
           <Link
             key={card.href}
             href={card.href}
-            className="rounded-lg border bg-white p-4 shadow-sm transition hover:bg-slate-50"
+            className="rounded-lg border bg-surface p-4 shadow-sm transition hover:bg-divider"
           >
             <div className="font-semibold">{card.label}</div>
-            <div className="mt-1 text-sm text-slate-500">{card.desc}</div>
+            <div className="mt-1 text-sm text-muted">{card.desc}</div>
           </Link>
         ))}
       </div>

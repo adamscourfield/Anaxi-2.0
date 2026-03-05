@@ -29,15 +29,15 @@ export default async function OnCallFeedPage({ searchParams }: { searchParams: R
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Today&apos;s {vocab.on_calls.plural} feed</h1>
-      <form className="flex gap-2 rounded border bg-white p-3">
+      <form className="flex gap-2 rounded border bg-surface p-3">
         <select name="status" defaultValue={status} className="border p-2">
           <option value="">All statuses</option><option value="SENT">SENT</option><option value="ACKNOWLEDGED">ACKNOWLEDGED</option><option value="RESOLVED">RESOLVED</option><option value="CANCELLED">CANCELLED</option>
         </select>
         <input name="yearGroup" defaultValue={yearGroup} placeholder="Year group" className="border p-2" />
-        <button className="rounded bg-slate-900 px-3 py-2 text-white" type="submit">Filter</button>
+        <button className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white" type="submit">Filter</button>
       </form>
 
-      <table className="w-full border bg-white text-sm">
+      <table className="w-full border bg-surface text-sm">
         <thead><tr className="border-b"><th className="p-2 text-left">Time</th><th className="p-2 text-left">Student</th><th className="p-2">Category</th><th className="p-2 text-left">Location</th><th className="p-2 text-left">Reason</th><th className="p-2">Status</th></tr></thead>
         <tbody>
           {(requests as any[]).map((r: any) => (

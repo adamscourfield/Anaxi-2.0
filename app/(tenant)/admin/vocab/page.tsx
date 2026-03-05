@@ -32,14 +32,14 @@ export default async function AdminVocabPage() {
         {REQUIRED_KEYS.map((key) => {
           const row = byKey.get(key);
           return (
-            <div key={key} className="grid grid-cols-3 gap-2 rounded border bg-white p-3">
+            <div key={key} className="grid grid-cols-3 gap-2 rounded border bg-surface p-3">
               <div className="font-medium">{key}</div>
               <input className="border p-2" name={`${key}_singular`} defaultValue={row?.labelSingular || ""} placeholder="Singular" />
               <input className="border p-2" name={`${key}_plural`} defaultValue={row?.labelPlural || ""} placeholder="Plural" />
             </div>
           );
         })}
-        <button className="rounded bg-slate-900 px-3 py-2 text-white" type="submit">Save labels</button>
+        <button className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white" type="submit">Save labels</button>
       </form>
     </div>
   );

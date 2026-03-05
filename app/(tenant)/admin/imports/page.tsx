@@ -13,7 +13,7 @@ export default async function AdminImportsPage() {
   return (
     <div className="space-y-3">
       <h1 className="text-xl font-semibold">Import jobs</h1>
-      <table className="w-full border bg-white text-sm">
+      <table className="w-full border bg-surface text-sm">
         <thead><tr className="border-b"><th className="p-2 text-left">Type</th><th className="p-2">Status</th><th className="p-2 text-left">File</th><th className="p-2">Rows</th><th className="p-2 text-left">Error summary</th></tr></thead>
         <tbody>
           {(jobs as any[]).map((j: any) => (

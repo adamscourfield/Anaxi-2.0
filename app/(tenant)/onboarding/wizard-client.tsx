@@ -31,10 +31,10 @@ export default function OnboardingWizardClient({
             key={label}
             className={`flex-1 rounded px-2 py-1 text-center ${
               i === stepIndex
-                ? "bg-slate-900 text-white"
+                ? "bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive text-white"
                 : i < stepIndex
-                ? "bg-slate-200 text-slate-700"
-                : "bg-slate-100 text-slate-400"
+                ? "bg-divider text-muted"
+                : "bg-divider text-muted"
             }`}
           >
             {i + 1}. {label}

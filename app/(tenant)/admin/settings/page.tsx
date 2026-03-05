@@ -45,7 +45,7 @@ export default async function AdminSettingsPage() {
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Settings</h1>
 
-      <form action={saveSettings} className="space-y-4 rounded border bg-white p-4 shadow-sm">
+      <form action={saveSettings} className="space-y-4 rounded border bg-surface p-4 shadow-sm">
         <h2 className="font-semibold">School details</h2>
         <div className="grid max-w-lg gap-3">
           <div>
@@ -91,12 +91,12 @@ export default async function AdminSettingsPage() {
           </div>
         </details>
 
-        <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">Save settings</button>
+        <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">Save settings</button>
       </form>
 
-      <div className="rounded border bg-white p-4 shadow-sm">
+      <div className="rounded border bg-surface p-4 shadow-sm">
         <h2 className="mb-3 font-semibold">Module toggles</h2>
-        <p className="mb-3 text-sm text-slate-600">Enable or disable modules for this school.</p>
+        <p className="mb-3 text-sm text-muted">Enable or disable modules for this school.</p>
         <div className="space-y-2">
           {features.map((feature: any) => (
             <form key={feature.key} action={toggleFeature} className="flex items-center gap-3 rounded border p-3">

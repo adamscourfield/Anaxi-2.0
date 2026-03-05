@@ -90,19 +90,19 @@ export default async function AdminDepartmentsPage() {
 
       <form action={createDepartment} className="flex max-w-sm gap-2">
         <input name="name" placeholder="Department name (e.g. English)" className="flex-1 rounded border p-2 text-sm" required />
-        <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-sm text-white">
+        <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-4 py-2 text-sm text-white">
           Add
         </button>
       </form>
 
       <div className="space-y-4">
         {(departments as any[]).length === 0 && (
-          <p className="text-sm text-slate-500">No departments yet.</p>
+          <p className="text-sm text-muted">No departments yet.</p>
         )}
         {(departments as any[]).map((dept: any) => {
           const memberIds = new Set<string>((dept.memberships as any[]).map((m: any) => m.userId));
           return (
-            <div key={dept.id} className="rounded border bg-white p-4 shadow-sm">
+            <div key={dept.id} className="rounded border bg-surface p-4 shadow-sm">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="font-semibold">{dept.name}</h2>
                 <form action={deleteDepartment}>
@@ -159,7 +159,7 @@ export default async function AdminDepartmentsPage() {
                       <option key={u.id} value={u.id}>{u.fullName}</option>
                     ))}
                 </select>
-                <button type="submit" className="rounded bg-slate-900 px-3 py-1 text-sm text-white">
+                <button type="submit" className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-1 text-sm text-white">
                   Add
                 </button>
               </form>

@@ -22,7 +22,7 @@ export default async function ObservationDetailPage({ params }: { params: { id: 
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Observation Detail</h1>
-      <div className="rounded border bg-white p-4 text-sm space-y-1">
+      <div className="rounded border bg-surface p-4 text-sm space-y-1">
         <p><strong>Teacher:</strong> {observation.observedTeacher?.fullName}</p>
         <p><strong>Observer:</strong> {observation.observer?.fullName}</p>
         <p><strong>Date:</strong> {new Date(observation.observedAt).toLocaleString()}</p>
@@ -40,9 +40,9 @@ export default async function ObservationDetailPage({ params }: { params: { id: 
           const description = override?.description || signal.descriptionDefault;
           const value = signalMap.get(signal.key);
           return (
-            <div className="rounded border bg-white p-3 text-sm" key={signal.key}>
+            <div className="rounded border bg-surface p-3 text-sm" key={signal.key}>
               <p className="font-medium">{displayName}</p>
-              <p className="text-slate-600">{description}</p>
+              <p className="text-muted">{description}</p>
               <p className="mt-1"><strong>Recorded:</strong> {value?.notObserved ? "Not observed" : value?.valueKey || "-"}</p>
             </div>
           );

@@ -22,7 +22,7 @@ const STATUS_PILL: Record<RiskStatus, string> = {
   SIGNIFICANT_DRIFT: "bg-red-100 text-red-700",
   EMERGING_DRIFT: "bg-amber-100 text-amber-700",
   STABLE: "bg-green-100 text-green-700",
-  LOW_COVERAGE: "bg-slate-100 text-slate-500",
+  LOW_COVERAGE: "bg-divider text-muted",
 };
 
 export default async function TeacherProfilePage({

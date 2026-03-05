@@ -174,7 +174,7 @@ export function ObservationWizard({
   return (
     <form
       action={action}
-      className="space-y-4 rounded border bg-white p-4"
+      className="space-y-4 rounded border bg-surface p-4"
       onSubmit={(event) => {
         if (!allDone) {
           event.preventDefault();
@@ -252,7 +252,7 @@ export function ObservationWizard({
 
           <button
             type="button"
-            className="col-span-2 rounded bg-slate-900 px-3 py-2 text-white disabled:opacity-40"
+            className="col-span-2 rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white disabled:opacity-40"
             disabled={!canContinue}
             onClick={() => setStep(2)}
           >
@@ -276,7 +276,7 @@ export function ObservationWizard({
             <button type="button" className="rounded border px-2 py-1 text-xs" onClick={markRemaining}>Mark remaining as Not Observed</button>
             <button type="button" className="rounded border px-2 py-1 text-xs" onClick={clearAllNotObserved}>Clear all Not Observed</button>
           </div>
-          {toast ? <p className="text-xs text-slate-600">{toast}</p> : null}
+          {toast ? <p className="text-xs text-muted">{toast}</p> : null}
 
           <section className="space-y-2">
             <h3 className="text-sm font-medium">Phase focus</h3>
@@ -285,15 +285,15 @@ export function ObservationWizard({
 
           <section className="space-y-2">
             <h3 className="text-sm font-medium">Universal signals</h3>
-            {universal.length ? renderSignalList(universal) : <p className="text-xs text-slate-500">No additional universal signals.</p>}
+            {universal.length ? renderSignalList(universal) : <p className="text-xs text-muted">No additional universal signals.</p>}
           </section>
 
           <details className="space-y-2">
             <summary className="cursor-pointer text-sm font-medium">Other signals</summary>
-            <div className="pt-2">{other.length ? renderSignalList(other) : <p className="text-xs text-slate-500">No remaining signals.</p>}</div>
+            <div className="pt-2">{other.length ? renderSignalList(other) : <p className="text-xs text-muted">No remaining signals.</p>}</div>
           </details>
 
-          <div className="sticky bottom-0 rounded border bg-white p-3">
+          <div className="sticky bottom-0 rounded border bg-surface p-3">
             <label className="mb-1 block text-xs">Context note (optional)</label>
             <input
               name="contextNote"
@@ -303,7 +303,7 @@ export function ObservationWizard({
               onChange={(event) => setContext((current) => ({ ...current, contextNote: event.target.value }))}
             />
             {submitError ? <p className="mb-2 text-xs text-rose-600">{submitError}</p> : null}
-            <button disabled={!allDone} className="rounded bg-slate-900 px-3 py-2 text-white disabled:opacity-40" type="submit">Submit observation</button>
+            <button disabled={!allDone} className="rounded bg-primaryBtn hover:bg-primaryBtnHover active:bg-primaryBtnActive px-3 py-2 text-white disabled:opacity-40" type="submit">Submit observation</button>
           </div>
         </section>
       )}

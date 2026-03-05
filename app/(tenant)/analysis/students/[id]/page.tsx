@@ -26,7 +26,7 @@ const BAND_PILL: Record<RiskBand, string> = {
 };
 
 const CONFIDENCE_PILL: Record<Confidence, string> = {
-  HIGH: "bg-slate-100 text-slate-500",
+  HIGH: "bg-divider text-muted",
   LOW: "bg-orange-100 text-orange-600",
 };
 

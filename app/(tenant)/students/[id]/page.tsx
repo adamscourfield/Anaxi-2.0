@@ -22,14 +22,14 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
         <p className="text-sm">UPN {student.upn} · Year {student.yearGroup || "-"} · SEND {student.sendFlag ? "Yes" : "No"} · PP {student.ppFlag ? "Yes" : "No"} · {student.status}</p>
       </div>
 
-      <section className="rounded border bg-white p-4">
+      <section className="rounded border bg-surface p-4">
         <h2 className="mb-2 font-medium">Teachers by subject (current)</h2>
         <ul className="list-disc pl-5 text-sm">
           {(student.subjects as any[]).map((x: any) => <li key={x.id}>{x.subject?.name}: {x.teacher?.fullName} ({x.teacher?.email})</li>)}
         </ul>
       </section>
 
-      <section className="rounded border bg-white p-4">
+      <section className="rounded border bg-surface p-4">
         <h2 className="mb-2 font-medium">Trends (snapshot history)</h2>
         <table className="w-full text-sm">
           <thead><tr className="border-b"><th className="p-2 text-left">Date</th><th className="p-2">Attendance</th><th className="p-2">Detentions</th><th className="p-2">On Calls</th><th className="p-2">Lateness</th></tr></thead>
@@ -41,14 +41,14 @@ export default async function StudentDetailPage({ params }: { params: { id: stri
         </table>
       </section>
 
-      <section className="rounded border bg-white p-4">
+      <section className="rounded border bg-surface p-4">
         <h2 className="mb-2 font-medium">Flags</h2>
         <ul className="space-y-2 text-sm">
           {(student.changeFlags as any[]).map((f: any) => <li key={f.id}><strong>{f.flagKey}</strong> ({f.severity}) {f.resolvedAt ? "Resolved" : "Open"}</li>)}
         </ul>
       </section>
 
-      <section className="rounded border bg-white p-4">
+      <section className="rounded border bg-surface p-4">
         <h2 className="mb-2 font-medium">On Call history</h2>
         <ul className="space-y-1 text-sm">
           {(student.onCallRequests as any[]).map((oc: any) => (

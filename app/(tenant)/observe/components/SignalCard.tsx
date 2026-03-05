@@ -30,7 +30,7 @@ export function SignalCard({
   onNotObserved: (checked: boolean) => void;
 }) {
   return (
-    <div id={id} className={`rounded border p-3 ${unanswered ? "border-amber-300 bg-amber-50/30" : "bg-white"}`}>
+    <div id={id} className={`rounded border p-3 ${unanswered ? "border-amber-300 bg-amber-50/30" : "bg-surface"}`}>
       <div className="mb-2 flex items-start justify-between gap-2">
         <p className="font-medium text-sm">{title}</p>
         <SignalHelpPopover description={description} lookFors={lookFors} options={options} scaleGuidance={scaleGuidance} />

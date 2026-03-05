@@ -9,12 +9,34 @@ type NavItem = {
   label: string;
   href: string;
   badgeCount?: number;
+  icon: string;
 };
 
 type NavSection = {
   label: string;
   items: NavItem[];
 };
+
+function iconFor(href: string) {
+  if (href === "/home") return "⌂";
+  if (href === "/my-actions") return "✓";
+  if (href.includes("/observe/history")) return "◷";
+  if (href.includes("/observe")) return "◉";
+  if (href.includes("/explorer")) return "◎";
+  if (href.includes("/students")) return "◍";
+  if (href.includes("/behaviour/import")) return "⇪";
+  if (href.includes("/on-call")) return "⚡";
+  if (href.includes("/meetings")) return "◈";
+  if (href.includes("/leave")) return "☼";
+  if (href.includes("/analysis/teachers")) return "◭";
+  if (href.includes("/analysis/cpd")) return "◇";
+  if (href.includes("/analysis/students")) return "◬";
+  if (href.includes("/admin/users")) return "◔";
+  if (href.includes("/admin/departments")) return "◫";
+  if (href.includes("/admin/features")) return "◨";
+  if (href.includes("/admin")) return "◩";
+  return "•";
+}
 
 export function TenantNav({
   role,
@@ -33,49 +55,56 @@ export function TenantNav({
   const has = (feature: FeatureKey) => enabledFeatures.includes(feature);
   const canImport = role === "SLT" || role === "ADMIN";
 
+  const navItem = (label: string, href: string, badgeCount?: number): NavItem => ({
+    label,
+    href,
+    badgeCount,
+    icon: iconFor(href),
+  });
+
   const sections: NavSection[] = [
     {
       label: "Overview",
-      items: [{ label: "Home", href: "/home" }, { label: "My actions", href: "/my-actions" }],
+      items: [navItem("Home", "/home"), navItem("My actions", "/my-actions")],
     },
     {
       label: "Observations",
       items: [
-        ...(has("OBSERVATIONS") ? [{ label: "Observation feed", href: "/tenant/observe" }] : []),
-        ...(has("OBSERVATIONS") ? [{ label: "Signals history", href: "/tenant/observe/history" }] : []),
-        ...(has("ANALYSIS") ? [{ label: "Explorer", href: "/explorer" }] : []),
+        ...(has("OBSERVATIONS") ? [navItem("Observation feed", "/tenant/observe")] : []),
+        ...(has("OBSERVATIONS") ? [navItem("Signals history", "/tenant/observe/history")] : []),
+        ...(has("ANALYSIS") ? [navItem("Explorer", "/explorer")] : []),
       ],
     },
     {
       label: "Students & conduct",
       items: [
-        ...(has("STUDENTS") ? [{ label: "Students", href: "/tenant/students" }] : []),
-        ...(has("STUDENTS_IMPORT") && canImport ? [{ label: "Behaviour import", href: "/tenant/behaviour/import" }] : []),
+        ...(has("STUDENTS") ? [navItem("Students", "/tenant/students")] : []),
+        ...(has("STUDENTS_IMPORT") && canImport ? [navItem("Behaviour import", "/tenant/behaviour/import")] : []),
       ],
     },
     {
       label: "Pastoral workflows",
       items: [
-        ...(has("ON_CALL") ? [{ label: "On call", href: "/tenant/on-call", badgeCount: onCallCount }] : []),
-        ...(has("MEETINGS") ? [{ label: "Meetings", href: "/tenant/meetings" }] : []),
-        ...(has("LEAVE") ? [{ label: "Leave of absence", href: "/tenant/leave", badgeCount: leaveCount }] : []),
+        ...(has("ON_CALL") ? [navItem("On call", "/tenant/on-call", onCallCount)] : []),
+        ...(has("MEETINGS") ? [navItem("Meetings", "/tenant/meetings")] : []),
+        ...(has("LEAVE") ? [navItem("Leave of absence", "/tenant/leave", leaveCount)] : []),
       ],
     },
     {
       label: "Analytics",
       items: [
-        ...(has("ANALYSIS") ? [{ label: "Teacher analysis", href: "/analysis/teachers" }] : []),
-        ...(has("ANALYSIS") ? [{ label: "CPD priorities", href: "/analysis/cpd" }] : []),
-        ...(has("ANALYSIS") ? [{ label: "Student priorities", href: "/analysis/students" }] : []),
+        ...(has("ANALYSIS") ? [navItem("Teacher analysis", "/analysis/teachers")] : []),
+        ...(has("ANALYSIS") ? [navItem("CPD priorities", "/analysis/cpd")] : []),
+        ...(has("ANALYSIS") ? [navItem("Student priorities", "/analysis/students")] : []),
       ],
     },
     {
       label: "Administration",
       items: [
-        ...(role === "ADMIN" && has("ADMIN") ? [{ label: "Admin dashboard", href: "/tenant/admin" }] : []),
-        ...(role === "ADMIN" && has("ADMIN") ? [{ label: "User management", href: "/tenant/admin/users" }] : []),
-        ...(role === "ADMIN" && has("ADMIN") ? [{ label: "Departments", href: "/tenant/admin/departments" }] : []),
-        ...(role === "ADMIN" && has("ADMIN") ? [{ label: "Feature flags", href: "/tenant/admin/features" }] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Admin dashboard", "/tenant/admin")] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("User management", "/tenant/admin/users")] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Departments", "/tenant/admin/departments")] : []),
+        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Feature flags", "/tenant/admin/features")] : []),
       ],
     },
   ].filter((section) => section.items.length > 0);
@@ -83,7 +112,7 @@ export function TenantNav({
   return (
     <aside
       className={`sticky top-4 h-fit rounded-xl border border-border bg-surface p-3 shadow-sm calm-transition ${
-        collapsed ? "w-[76px]" : "w-full md:w-[280px]"
+        collapsed ? "w-[220px]" : "w-full md:w-[280px]"
       }`}
       aria-label="Sidebar menu"
     >
@@ -93,7 +122,7 @@ export function TenantNav({
         type="button"
         aria-expanded={!collapsed}
       >
-        {collapsed ? "☰" : "Collapse menu"}
+        {collapsed ? "Expand menu" : "Collapse menu"}
       </button>
 
       <nav className="space-y-2 text-sm">
@@ -102,32 +131,38 @@ export function TenantNav({
 
           return (
             <details key={section.label} open={sectionHasCurrent || !collapsed} className="rounded-lg border border-border/70 bg-bg/30">
-              <summary className="cursor-pointer list-none px-3 py-2 font-medium text-text">
-                {collapsed ? section.label.slice(0, 1) : section.label}
-              </summary>
-              {!collapsed && (
-                <ul className="space-y-1 border-t border-border/70 px-2 py-2">
-                  {section.items.map((item) => {
-                    const active = pathname?.startsWith(item.href);
+              <summary className="cursor-pointer list-none px-3 py-2 font-medium text-text">{section.label}</summary>
+              <ul className="space-y-1 border-t border-border/70 px-2 py-2">
+                {section.items.map((item) => {
+                  const active = pathname?.startsWith(item.href);
 
-                    return (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          className={`flex items-center justify-between rounded-md px-2 py-1.5 text-sm calm-transition ${
-                            active ? "bg-accent/15 text-text" : "text-muted hover:bg-divider hover:text-text"
-                          }`}
-                        >
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`flex items-center justify-between rounded-md px-2 py-1.5 text-sm calm-transition ${
+                          active ? "bg-accent/15 text-text" : "text-muted hover:bg-divider hover:text-text"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <span
+                            className={`inline-flex h-6 w-6 items-center justify-center rounded-md border text-xs font-semibold ${
+                              active ? "border-accent/40 bg-accent/10 text-text" : "border-border/70 bg-bg/50"
+                            }`}
+                            aria-hidden
+                          >
+                            {item.icon}
+                          </span>
                           <span>{item.label}</span>
-                          {item.badgeCount && item.badgeCount > 0 ? (
-                            <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-xs text-white">{item.badgeCount}</span>
-                          ) : null}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+                        </span>
+                        {item.badgeCount && item.badgeCount > 0 ? (
+                          <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-xs text-white">{item.badgeCount}</span>
+                        ) : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </details>
           );
         })}

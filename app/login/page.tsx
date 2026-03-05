@@ -15,7 +15,7 @@ export default function LoginPage() {
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") || "");
     const password = String(form.get("password") || "");
-    const res = await signIn("credentials", { email, password, redirect: false, callbackUrl: "/tenant" });
+    const res = await signIn("credentials", { email, password, redirect: false, callbackUrl: "/home" });
     if (res?.error) {
       if (res.error === "CredentialsSignin") {
         setError("Invalid email or password. Please try again.");

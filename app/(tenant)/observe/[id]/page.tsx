@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
+import { canViewObservation } from "@/modules/authz";
 import { SIGNAL_DEFINITIONS } from "@/modules/observations/signalDefinitions";
 import { getTenantSignalLabels } from "@/modules/observations/tenantSignalLabels";
 import { Card } from "@/components/ui/card";
@@ -19,7 +20,27 @@ export default async function ObservationDetailPage({ params }: { params: { id: 
     include: { observedTeacher: true, observer: true, signals: true }
   });
   if (!observation) notFound();
-  if (user.role === "TEACHER" && observation.observedTeacherId !== user.id) throw new Error("FORBIDDEN");
+
+  const [hodMemberships, coachAssignments, observedDeptMemberships] = await Promise.all([
+    (prisma as any).departmentMembership.findMany({ where: { userId: user.id, isHeadOfDepartment: true } }),
+    (prisma as any).coachAssignment.findMany({ where: { coachUserId: user.id } }),
+    (prisma as any).departmentMembership.findMany({ where: { userId: observation.observedTeacherId } }),
+  ]);
+
+  const viewer = {
+    userId: user.id,
+    role: user.role,
+    hodDepartmentIds: (hodMemberships as any[]).map((m: any) => m.departmentId),
+    coacheeUserIds: (coachAssignments as any[]).map((a: any) => a.coacheeUserId),
+  };
+
+  const canView = canViewObservation(viewer, {
+    observedUserId: observation.observedTeacherId,
+    observerUserId: observation.observerId,
+    observedUserDepartmentIds: (observedDeptMemberships as any[]).map((m: any) => m.departmentId),
+  });
+
+  if (!canView) throw new Error("FORBIDDEN");
   const labelMap = await getTenantSignalLabels(user.tenantId);
 
   const signalMap = new Map((observation.signals as any[]).map((signal) => [signal.signalKey, signal]));

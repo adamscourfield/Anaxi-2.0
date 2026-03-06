@@ -46,6 +46,7 @@ export async function decideLoaRequest(formData: FormData) {
   await requireFeature(user.tenantId, "LEAVE");
   const requestId = String(formData.get("requestId") || "");
   const decisionType = String(formData.get("decisionType") || "");
+  const decisionNotes = String(formData.get("decisionNotes") || "").trim();
 
   const request = await (prisma as any).lOARequest.findFirst({ where: { id: requestId, tenantId: user.tenantId } });
   if (!request) throw new Error("NOT_FOUND");
@@ -56,10 +57,17 @@ export async function decideLoaRequest(formData: FormData) {
 
   const status = decisionType === "DENIED" ? "DENIED" : "APPROVED";
 
+  const auditComment = decisionNotes
+    ? `[Decision ${status} by ${user.fullName} on ${new Date().toLocaleString("en-GB")}] ${decisionNotes}`
+    : null;
+
   await (prisma as any).lOARequest.update({
     where: { id: requestId },
     data: {
-      status
+      status,
+      notes: auditComment
+        ? [request.notes, auditComment].filter(Boolean).join("\n\n")
+        : request.notes,
     }
   });
 

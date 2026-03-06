@@ -91,6 +91,7 @@ function LeadershipHome({
   cohortRows,
   studentRows,
   topImproving,
+  hasLeaveFeature,
 }: {
   windowDays: number;
   cpdRows: CpdPriorityRow[];
@@ -98,6 +99,7 @@ function LeadershipHome({
   cohortRows: CohortPivotRow[];
   studentRows: StudentRiskRow[];
   topImproving: CpdPriorityRow[];
+  hasLeaveFeature: boolean;
 }) {
   const topCpd = cpdRows.filter((r) => r.teachersDriftingDown > 0).slice(0, 3);
   const topTeachers = teacherRows.slice(0, 5);
@@ -243,6 +245,18 @@ function LeadershipHome({
           </CollapsibleCard>
         </section>
       )}
+
+      {hasLeaveFeature ? (
+        <section>
+          <CollapsibleCard title="Leave approvals" defaultOpen={false}>
+            <div className="flex flex-wrap gap-3 text-sm">
+              <Link href="/leave/pending" className="text-accent hover:underline">Review pending requests →</Link>
+              <Link href="/leave/calendar" className="text-accent hover:underline">Open leave calendar →</Link>
+              <Link href="/leave" className="text-accent hover:underline">All leave requests →</Link>
+            </div>
+          </CollapsibleCard>
+        </section>
+      ) : null}
 
       <div className="flex gap-4">
         <Link href="/explorer" className="text-sm text-accent hover:underline">Open Explorer →</Link>
@@ -788,6 +802,7 @@ export default async function HomePage({
           cohortRows={cohortResult.rows}
           studentRows={studentResult.rows}
           topImproving={topImproving}
+          hasLeaveFeature={hasLeaveFeature}
         />
       );
     }

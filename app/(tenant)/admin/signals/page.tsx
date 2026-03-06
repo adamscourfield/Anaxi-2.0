@@ -43,7 +43,10 @@ export default async function AdminSignalsPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Signals" subtitle="Edit tenant-specific language for observation signals." />
+      <PageHeader title="Observation signals" subtitle="Edit signal display names and descriptions used in observation workflows." />
+      <Card className="text-sm text-muted">
+        Use this for signal-level wording only. For cross-module wording, use <a className="text-accent hover:underline" href="/tenant/admin/language">Language</a>.
+      </Card>
       <Card className="overflow-hidden p-0">
         <div className="p-4 pb-0">
           <SectionHeader title="Observation signal labels" subtitle="Set display names and descriptions for each signal key." />

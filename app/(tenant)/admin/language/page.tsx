@@ -61,7 +61,11 @@ export default async function AdminLanguagePage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Language" subtitle="Customize behaviour terminology and observation signal copy." />
+      <PageHeader title="Terminology · Language" subtitle="Configure wording used in behaviour and observation experiences." />
+
+      <Card className="text-sm text-muted">
+        Use this page for broad language choices. For event singular/plural wording, use <a className="text-accent hover:underline" href="/tenant/admin/vocab">Vocabulary</a>. For signal-only wording, use <a className="text-accent hover:underline" href="/tenant/admin/signals">Observation signals</a>.
+      </Card>
 
       <Card>
         <SectionHeader title="Behaviour labels" subtitle="Override labels used across behaviour and leave workflows." />

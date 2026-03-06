@@ -30,7 +30,10 @@ export default async function AdminVocabPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Vocabulary" subtitle="Set singular and plural labels for behaviour events across the app." />
+      <PageHeader title="Terminology · Vocabulary" subtitle="Set singular/plural labels for behaviour event language." />
+      <Card className="text-sm text-muted">
+        This controls event nouns (for example: detention/detentions). For broader UI wording, use <a className="text-accent hover:underline" href="/tenant/admin/language">Language</a>.
+      </Card>
       <form action={saveVocab} className="space-y-3">
         {REQUIRED_KEYS.map((key) => {
           const row = byKey.get(key);

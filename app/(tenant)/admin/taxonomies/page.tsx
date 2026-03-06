@@ -123,7 +123,10 @@ export default async function AdminTaxonomiesPage({ searchParams }: { searchPara
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Taxonomies" subtitle="Maintain configurable taxonomy values used in leave and on-call flows." />
+      <PageHeader title="Taxonomies" subtitle="Maintain configurable values used in leave and on-call workflows." />
+      <Card className="text-sm text-muted">
+        For who can approve leave and who is covered, use <a className="text-accent hover:underline" href="/tenant/admin/leave-approvals">Leave approval rules</a>. Use this page for reasons, locations, and recipients.
+      </Card>
       <div className="flex flex-wrap gap-2">
         {tabLink("loa-reasons", "LOA Reasons")}
         {tabLink("loa-authorisers", "LOA Authorisers")}

@@ -99,7 +99,11 @@ export default async function AdminLeaveApprovalsPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Leave approvals" subtitle="Manage approval groups, approvers, and optional scoped staff coverage." />
+      <PageHeader title="Leave approval rules" subtitle="Manage approval groups, approvers, and optional scoped staff coverage." />
+
+      <Card className="text-sm text-muted">
+        Recommended model: configure approvers and scope here. Use <a className="text-accent hover:underline" href="/tenant/admin/taxonomies?tab=loa-reasons">LOA reasons</a> in Taxonomies for request categories.
+      </Card>
 
       <Card>
         <SectionHeader title="Create group" subtitle="Define a group and whether it applies to all staff or selected members." />

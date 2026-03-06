@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -30,6 +30,19 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
   const params = useSearchParams();
   const [helpOpen, setHelpOpen] = useState(false);
   const [showSpeedPrompt, setShowSpeedPrompt] = useState(false);
+  const speedPromptContinueRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!showSpeedPrompt) return;
+    speedPromptContinueRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowSpeedPrompt(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showSpeedPrompt]);
 
   const orderedByOrder = useMemo(() => [...signals].sort((a, b) => a.order - b.order), [signals]);
   const draft = useMemo(() => loadDraft(draftKey, orderedByOrder.map((signal) => signal.key)), [draftKey, orderedByOrder]);
@@ -130,8 +143,15 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
       <SignalHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} description={description} lookFors={currentSignal.lookFors} scaleRows={scaleRows} />
 
       {showSpeedPrompt ? (
-        <div className="fixed inset-0 z-50 bg-[var(--overlay)] p-4">
-          <Card className="mx-auto mt-40 max-w-md">
+        <div className="fixed inset-0 z-50 bg-[var(--overlay)] p-4" role="presentation" onClick={() => setShowSpeedPrompt(false)}>
+          <Card
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="speed-prompt-title"
+            className="mx-auto mt-40 max-w-md"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 id="speed-prompt-title" className="text-sm font-semibold text-text">Finish quickly?</h3>
             <BodyText>You’ve captured the key signals for this lesson phase. Mark the remaining signals as Not Observed?</BodyText>
             <div className="mt-3 flex gap-2">
               <Button
@@ -149,6 +169,7 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
                 Mark remaining
               </Button>
               <Button
+                ref={speedPromptContinueRef}
                 type="button"
                 variant="secondary"
                 onClick={() => {

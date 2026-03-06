@@ -151,7 +151,7 @@ export async function POST(req: Request) {
     await (prisma as any).importJob.update({
       where: { id: importJob.id },
       data: {
-        status: rowsFailed === 0 ? "SUCCESS" : "SUCCESS",
+        status: rowsFailed === 0 ? "SUCCESS" : "FAILED",
         rowCount: rows.length + errors.length,
         rowsProcessed,
         rowsFailed,

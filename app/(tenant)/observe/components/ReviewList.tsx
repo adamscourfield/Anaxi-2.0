@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { H1, MetaText } from "@/components/ui/typography";
 import { TileOption } from "@/components/ui/tile-option";
 import { GLOBAL_SCALE } from "@/modules/observations/signalDefinitions";
-import { clearDraft, loadDraft, persistDraft } from "./observationDraft";
+import { loadDraft, persistDraft } from "./observationDraft";
 
 type Signal = { key: string; order: number; displayNameDefault: string };
 type LabelMap = Record<string, { displayName: string; description?: string }>;
@@ -36,7 +36,7 @@ export function ReviewList({
 
   return (
     <Card className="mx-auto max-w-2xl">
-      <form action={action} className="space-y-4" onSubmit={() => clearDraft(draftKey)}>
+      <form action={action} className="space-y-4">
         <div className="flex items-center justify-between">
           <H1 className="text-[20px]">Review observation</H1>
           <MetaText>{completed}/{orderedSignals.length} complete</MetaText>

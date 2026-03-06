@@ -7,6 +7,7 @@ import { getTenantSignalLabels } from "@/modules/observations/tenantSignalLabels
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { PageHeader } from "@/components/ui/page-header";
+import { ClearDraftOnSuccess } from "../components/ClearDraftOnSuccess";
 
 export default async function ObservationDetailPage({ params }: { params: { id: string } }) {
   const user = await getSessionUserOrThrow();
@@ -22,8 +23,11 @@ export default async function ObservationDetailPage({ params }: { params: { id: 
 
   const signalMap = new Map((observation.signals as any[]).map((signal) => [signal.signalKey, signal]));
 
+  const draftKey = `observation-draft:${user.tenantId}:${user.id}`;
+
   return (
     <div className="space-y-5">
+      <ClearDraftOnSuccess draftKey={draftKey} />
       <PageHeader title="Observation detail" subtitle="Review context and signal-level evidence." />
 
       <Card className="space-y-1 text-sm">

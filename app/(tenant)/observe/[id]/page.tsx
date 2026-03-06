@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature } from "@/lib/guards";
@@ -40,6 +41,20 @@ export default async function ObservationDetailPage({ params }: { params: { id: 
         <p><strong>Class code:</strong> {observation.classCode || "-"}</p>
         <p><strong>Context:</strong> {observation.contextNote || "-"}</p>
       </Card>
+
+      {user.role !== "TEACHER" ? (
+        <Card className="space-y-2 text-sm">
+          <p className="font-medium text-text">Next steps</p>
+          <div className="flex flex-wrap gap-2">
+            <Link className="text-accent hover:text-accentHover" href={`/observe/history?teacherId=${observation.observedTeacherId}`}>
+              View this teacher's observations
+            </Link>
+            <Link className="text-accent hover:text-accentHover" href={`/analysis/teachers/${observation.observedTeacherId}?window=21`}>
+              Compare direction of travel (21d)
+            </Link>
+          </div>
+        </Card>
+      ) : null}
 
       <section className="space-y-3">
         <SectionHeader title="Signal records" />

@@ -17,6 +17,9 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
   const observerId = String(searchParams?.observerId || "");
   const from = String(searchParams?.from || "");
   const to = String(searchParams?.to || "");
+  const windowDays = Number(searchParams?.window || "");
+  const useWindow = Number.isFinite(windowDays) && windowDays > 0 && !from && !to;
+  const windowStart = useWindow ? new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000) : null;
 
   const where: any = {
     tenantId: user.tenantId,
@@ -25,11 +28,12 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
     ...(subject ? { subject: { contains: subject, mode: "insensitive" } } : {}),
     ...(yearGroup ? { yearGroup } : {}),
     ...(observerId && user.role !== "TEACHER" ? { observerId } : {}),
-    ...(from || to
+    ...((from || to || useWindow)
       ? {
           observedAt: {
             ...(from ? { gte: new Date(from) } : {}),
-            ...(to ? { lte: new Date(to) } : {})
+            ...(to ? { lte: new Date(to) } : {}),
+            ...(useWindow && windowStart ? { gte: windowStart } : {}),
           }
         }
       : {})

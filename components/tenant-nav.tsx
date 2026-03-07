@@ -68,7 +68,7 @@ export function TenantNav({
       items: [navItem("Home", "/home"), navItem("My actions", "/my-actions")],
     },
     {
-      label: "Observations",
+      label: "Instruction (Observe)",
       items: [
         ...(has("OBSERVATIONS") ? [navItem("Observation feed", "/tenant/observe")] : []),
         ...(has("OBSERVATIONS") ? [navItem("Signals history", "/tenant/observe/history")] : []),
@@ -76,16 +76,16 @@ export function TenantNav({
       ],
     },
     {
-      label: "Students & conduct",
+      label: "Culture (Behaviour)",
       items: [
         ...(has("STUDENTS") ? [navItem("Students", "/tenant/students")] : []),
         ...(has("STUDENTS_IMPORT") && canImport ? [navItem("Behaviour import", "/tenant/behaviour/import")] : []),
+        ...(has("ON_CALL") ? [navItem("On call", "/tenant/on-call", onCallCount)] : []),
       ],
     },
     {
-      label: "Pastoral workflows",
+      label: "Operations",
       items: [
-        ...(has("ON_CALL") ? [navItem("On call", "/tenant/on-call", onCallCount)] : []),
         ...(has("MEETINGS") ? [navItem("Meetings", "/tenant/meetings")] : []),
         ...(has("LEAVE") ? [navItem("Leave of absence", "/tenant/leave", leaveCount)] : []),
       ],

@@ -7,22 +7,21 @@ import { StatusPill, PillVariant } from "@/components/ui/status-pill";
 import { SectionHeader } from "@/components/ui/section-header";
 import { DriverChips } from "@/components/ui/driver-chips";
 import { CollapsibleCard } from "@/components/ui/collapsible-card";
+import { CpdPriorityRow } from "@/modules/analysis/cpdPriorities";
 import {
-  computeCpdPriorities,
-  getTopImprovingSignals,
-  CpdPriorityRow,
-} from "@/modules/analysis/cpdPriorities";
-import {
-  computeTeacherRiskIndex,
   computeTeacherSignalProfile,
   TeacherRiskRow,
   RiskStatus,
 } from "@/modules/analysis/teacherRisk";
-import { computeStudentRiskIndex, StudentRiskRow } from "@/modules/analysis/studentRisk";
-import { computeCohortPivot, CohortPivotRow } from "@/modules/analysis/cohortPivot";
+import { StudentRiskRow } from "@/modules/analysis/studentRisk";
+import { CohortPivotRow } from "@/modules/analysis/cohortPivot";
 import { UserRole } from "@/lib/types";
 import { assembleHomeCards } from "@/modules/home/assembler";
-import { hydrateTeacherHomeData } from "@/modules/home/hydration";
+import {
+  hydrateLeadershipHomeData,
+  hydrateHodHomeData,
+  hydrateTeacherHomeData,
+} from "@/modules/home/hydration";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -789,22 +788,24 @@ export default async function HomePage({
         );
       }
 
-      const [cpdRows, teacherRisk, cohortResult, studentResult] = await Promise.all([
-        computeCpdPriorities(user.tenantId, windowDays),
-        computeTeacherRiskIndex(user.tenantId, windowDays),
-        computeCohortPivot(user.tenantId, windowDays),
-        computeStudentRiskIndex(user.tenantId, windowDays, user.id),
-      ]);
-
-      const topImproving = getTopImprovingSignals(cpdRows);
+      const {
+        cpdRows,
+        teacherRows,
+        cohortRows,
+        studentRows,
+        topImproving,
+      } = await hydrateLeadershipHomeData({
+        user,
+        windowDays,
+      });
 
       return (
         <LeadershipHome
           windowDays={windowDays}
           cpdRows={cpdRows}
-          teacherRows={teacherRisk}
-          cohortRows={cohortResult.rows}
-          studentRows={studentResult.rows}
+          teacherRows={teacherRows}
+          cohortRows={cohortRows}
+          studentRows={studentRows}
           topImproving={topImproving}
           hasLeaveFeature={homeAssembly.has("operations.leave-approvals")}
         />
@@ -813,20 +814,20 @@ export default async function HomePage({
 
     // ── HOD ──────────────────────────────────────────────────────────────────
     if (variant === "hod") {
-      const hodMemberships = await (prisma as any).departmentMembership.findMany({
-        where: { userId: user.id, isHeadOfDepartment: true },
-        include: { department: true },
-      });
-
-      const allDepts: { id: string; name: string }[] = (hodMemberships as any[]).map((m: any) => ({
-        id: m.departmentId as string,
-        name: m.department.name as string,
-      }));
-
-      // Active dept from query param or first
       const rawDept = typeof searchParams?.dept === "string" ? searchParams.dept : null;
-      const activeDeptId: string | null =
-        rawDept && allDepts.find((d) => d.id === rawDept) ? rawDept : allDepts[0]?.id ?? null;
+      const {
+        allDepts,
+        activeDeptId,
+        deptName,
+        deptCpdRows,
+        filteredTeacherRows,
+        selfProfile,
+        wholeSchoolTop1,
+      } = await hydrateHodHomeData({
+        user,
+        windowDays,
+        searchDeptId: rawDept,
+      });
 
       if (!hasAnalysisFeature || !activeDeptId) {
         return (
@@ -839,28 +840,6 @@ export default async function HomePage({
           </Card>
         );
       }
-
-      const deptName = allDepts.find((d) => d.id === activeDeptId)?.name ?? "";
-
-      const [deptCpdRows, deptTeacherRows, selfProfile, wholeSchoolCpd] = await Promise.all([
-        computeCpdPriorities(user.tenantId, windowDays, { departmentId: activeDeptId }),
-        computeTeacherRiskIndex(user.tenantId, windowDays),
-        computeTeacherSignalProfile(user.tenantId, user.id, windowDays),
-        computeCpdPriorities(user.tenantId, windowDays),
-      ]);
-
-      // Filter teacher rows to active department
-      const deptMemberships = await (prisma as any).departmentMembership.findMany({
-        where: { tenantId: user.tenantId, departmentId: activeDeptId },
-      });
-      const deptUserIds = new Set<string>(
-        (deptMemberships as any[]).map((m: any) => m.userId as string)
-      );
-      const filteredTeacherRows = (deptTeacherRows as TeacherRiskRow[]).filter((r) =>
-        deptUserIds.has(r.teacherMembershipId)
-      );
-
-      const wholeSchoolTop1 = wholeSchoolCpd.find((r) => r.teachersDriftingDown > 0) ?? null;
 
       return (
         <HodHome

@@ -50,6 +50,7 @@ A card should render only when:
 
 - Empty state text must be explicit and action-oriented.
 - Query errors should degrade gracefully (card-level fallback), not crash whole home page.
+- Hydration now uses safe fallbacks in `modules/home/hydration.ts` so failed queries default to empty payloads.
 
 ## Implementation status
 

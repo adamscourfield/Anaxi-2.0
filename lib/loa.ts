@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { hasPermission } from "@/lib/rbac";
 import { SessionUser } from "@/lib/types";
 
 export async function canManageLoa(user: SessionUser, requesterId?: string) {
-  if (user.role === "SLT" || user.role === "ADMIN") return true;
+  if (hasPermission(user.role, "leave:approve_all")) return true;
 
   const approver = await (prisma as any).user.findFirst({
     where: { id: user.id, tenantId: user.tenantId },
@@ -27,7 +28,7 @@ export async function canManageLoa(user: SessionUser, requesterId?: string) {
 }
 
 export async function loaManageableRequesterIds(user: SessionUser) {
-  if (user.role === "SLT" || user.role === "ADMIN") return null;
+  if (hasPermission(user.role, "leave:approve_all")) return null;
 
   const approver = await (prisma as any).user.findFirst({
     where: { id: user.id, tenantId: user.tenantId },

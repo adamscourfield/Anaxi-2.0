@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FeatureKey, UserRole } from "@/lib/types";
+import { hasAnyPermission, hasPermission } from "@/lib/rbac";
 
 type NavItem = {
   label: string;
@@ -53,7 +54,11 @@ export function TenantNav({
   const [collapsed, setCollapsed] = useState(false);
 
   const has = (feature: FeatureKey) => enabledFeatures.includes(feature);
-  const canImport = role === "SLT" || role === "ADMIN";
+  const canImport = hasPermission(role, "import:write");
+  const canAccessAdmin = hasPermission(role, "admin:access");
+  const canAccessAdminUsers = hasPermission(role, "admin:users");
+  const canAccessAdminSettings = hasPermission(role, "admin:settings");
+  const canSeeAnalysis = hasAnyPermission(role, ["analysis:view", "analysis:export"]);
 
   const navItem = (label: string, href: string, badgeCount?: number): NavItem => ({
     label,
@@ -72,7 +77,7 @@ export function TenantNav({
       items: [
         ...(has("OBSERVATIONS") ? [navItem("Observation feed", "/tenant/observe")] : []),
         ...(has("OBSERVATIONS") ? [navItem("Signals history", "/tenant/observe/history")] : []),
-        ...(has("ANALYSIS") ? [navItem("Explorer", "/explorer")] : []),
+        ...(has("ANALYSIS") && canSeeAnalysis ? [navItem("Explorer", "/explorer")] : []),
       ],
     },
     {
@@ -93,18 +98,18 @@ export function TenantNav({
     {
       label: "Analytics",
       items: [
-        ...(has("ANALYSIS") ? [navItem("Teacher analysis", "/analysis/teachers")] : []),
-        ...(has("ANALYSIS") ? [navItem("CPD priorities", "/analysis/cpd")] : []),
-        ...(has("ANALYSIS") ? [navItem("Student priorities", "/analysis/students")] : []),
+        ...(has("ANALYSIS") && canSeeAnalysis ? [navItem("Teacher analysis", "/analysis/teachers")] : []),
+        ...(has("ANALYSIS") && canSeeAnalysis ? [navItem("CPD priorities", "/analysis/cpd")] : []),
+        ...(has("ANALYSIS") && canSeeAnalysis ? [navItem("Student priorities", "/analysis/students")] : []),
       ],
     },
     {
       label: "Administration",
       items: [
-        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Admin dashboard", "/tenant/admin")] : []),
-        ...(role === "ADMIN" && has("ADMIN") ? [navItem("User management", "/tenant/admin/users")] : []),
-        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Departments", "/tenant/admin/departments")] : []),
-        ...(role === "ADMIN" && has("ADMIN") ? [navItem("Feature flags", "/tenant/admin/features")] : []),
+        ...(canAccessAdmin && has("ADMIN") ? [navItem("Admin dashboard", "/tenant/admin")] : []),
+        ...(canAccessAdminUsers && has("ADMIN") ? [navItem("User management", "/tenant/admin/users")] : []),
+        ...(canAccessAdminSettings && has("ADMIN") ? [navItem("Departments", "/tenant/admin/departments")] : []),
+        ...(canAccessAdminSettings && has("ADMIN") ? [navItem("Feature flags", "/tenant/admin/features")] : []),
       ],
     },
   ].filter((section) => section.items.length > 0);

@@ -22,6 +22,7 @@ import { computeStudentRiskIndex, StudentRiskRow } from "@/modules/analysis/stud
 import { computeCohortPivot, CohortPivotRow } from "@/modules/analysis/cohortPivot";
 import { UserRole } from "@/lib/types";
 import { assembleHomeCards } from "@/modules/home/assembler";
+import { hydrateTeacherHomeData } from "@/modules/home/hydration";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -768,9 +769,6 @@ export default async function HomePage({
     where: { tenantId: user.tenantId, enabled: true },
   });
   const enabledFeatures = new Set<string>((features as any[]).map((f: any) => f.key as string));
-  const hasMeetingsFeature = enabledFeatures.has("MEETINGS");
-  const hasLeaveFeature = enabledFeatures.has("LEAVE") || enabledFeatures.has("LEAVE_OF_ABSENCE");
-  const hasOnCallFeature = enabledFeatures.has("ON_CALL");
   const hasAnalysisFeature = enabledFeatures.has("ANALYSIS");
 
   const homeAssembly = assembleHomeCards({
@@ -881,37 +879,18 @@ export default async function HomePage({
     }
 
     // ── Teacher ──────────────────────────────────────────────────────────────
-    const [selfProfile, wholeSchoolCpd, loaData, onCallData, openActionsData] = await Promise.all([
-      hasAnalysisFeature
-        ? computeTeacherSignalProfile(user.tenantId, user.id, windowDays)
-        : Promise.resolve(null),
-      hasAnalysisFeature
-        ? computeCpdPriorities(user.tenantId, windowDays)
-        : Promise.resolve([]),
-      hasLeaveFeature
-        ? (prisma as any).lOARequest.findFirst({
-            where: { tenantId: user.tenantId, requesterId: user.id },
-            orderBy: { createdAt: "desc" },
-          })
-        : Promise.resolve(null),
-      hasOnCallFeature
-        ? (prisma as any).onCallRequest.findMany({
-            where: { tenantId: user.tenantId, requesterUserId: user.id },
-            orderBy: { createdAt: "desc" },
-            take: 3,
-          })
-        : Promise.resolve([]),
-      hasMeetingsFeature
-        ? (prisma as any).meetingAction.findMany({
-            where: { tenantId: user.tenantId, ownerUserId: user.id, status: "OPEN" },
-            orderBy: [{ dueDate: "asc" }],
-            take: 5,
-          })
-        : Promise.resolve([]),
-    ]);
-
-    const wholeSchoolTop1 =
-      (wholeSchoolCpd as CpdPriorityRow[]).find((r) => r.teachersDriftingDown > 0) ?? null;
+    const {
+      selfProfile,
+      wholeSchoolTop1,
+      loaData,
+      onCallData,
+      openActionsData,
+    } = await hydrateTeacherHomeData({
+      user,
+      windowDays,
+      hasAnalysisFeature,
+      assembly: homeAssembly,
+    });
 
     return (
       <TeacherHome

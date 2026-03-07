@@ -54,6 +54,7 @@ A card should render only when:
 ## Implementation status
 
 ✅ Initial assembler now exists at `modules/home/assembler.ts` and is wired into the home page for card-visibility gating by role + feature.
+✅ Initial hydration pipeline now exists at `modules/home/hydration.ts` for teacher home cards (parallel contract-aware loading).
 
 ## Next implementation step
 

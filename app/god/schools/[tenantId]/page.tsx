@@ -99,10 +99,39 @@ export default async function SchoolDetailPage({ params, searchParams }: { param
 
       <div className="rounded-lg border border-border bg-surface p-4">
         <h2 className="mb-2 font-medium">Recent invites</h2>
-        <ul className="space-y-1 text-sm">
-          {school.adminInvites.map((i) => (
-            <li key={i.id}>{i.fullName} · {i.email} · {i.acceptedAt ? "accepted" : `expires ${new Date(i.expiresAt).toLocaleDateString("en-GB")}`}</li>
-          ))}
+        <ul className="space-y-2 text-sm">
+          {school.adminInvites.map((i) => {
+            const isAccepted = Boolean(i.acceptedAt);
+            const isExpired = !isAccepted && new Date(i.expiresAt).getTime() < Date.now();
+            return (
+              <li key={i.id} className="rounded border border-border p-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <div>{i.fullName} · {i.email}</div>
+                    <div className="text-xs text-muted">
+                      {isAccepted
+                        ? `accepted ${new Date(i.acceptedAt!).toLocaleDateString("en-GB")}`
+                        : isExpired
+                          ? "expired"
+                          : `expires ${new Date(i.expiresAt).toLocaleDateString("en-GB")}`}
+                    </div>
+                  </div>
+                  {!isAccepted ? (
+                    <div className="flex gap-1">
+                      <form method="post" action={`/api/god/schools/${school.id}/invites/${i.id}/resend`}>
+                        <button className="rounded border border-border px-2 py-1 text-xs hover:bg-divider">Resend</button>
+                      </form>
+                      {!isExpired ? (
+                        <form method="post" action={`/api/god/schools/${school.id}/invites/${i.id}/revoke`}>
+                          <button className="rounded border border-border px-2 py-1 text-xs hover:bg-divider">Revoke</button>
+                        </form>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
           {school.adminInvites.length === 0 ? <li className="text-muted">No invites yet.</li> : null}
         </ul>
       </div>

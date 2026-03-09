@@ -41,7 +41,7 @@ export async function POST(req: Request, { params }: { params: { tenantId: strin
       actorUserId: actor.id,
       action: "school.admin.invite.create",
       targetType: "SchoolAdminInvite",
-      afterJson: { email, fullName, expiresAt, inviteUrl },
+      afterJson: { email, fullName, expiresAt },
     },
   });
 

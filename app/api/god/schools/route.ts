@@ -24,6 +24,11 @@ export async function POST(req: Request) {
 
   const slugBase = slugify(slugInput || name);
 
+  const slugTaken = await prisma.tenant.findUnique({ where: { slug: slugBase } });
+  if (slugTaken) {
+    return NextResponse.json({ error: "School slug already exists" }, { status: 409 });
+  }
+
   const tenant = await prisma.tenant.create({
     data: {
       name,

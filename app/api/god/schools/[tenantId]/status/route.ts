@@ -6,6 +6,9 @@ export async function POST(req: Request, { params }: { params: { tenantId: strin
   const actor = await requireSuperAdminUser();
   const form = await req.formData();
   const status = String(form.get("status") ?? "ACTIVE") as "ACTIVE" | "PAUSED" | "ARCHIVED";
+  if (!["ACTIVE", "PAUSED", "ARCHIVED"].includes(status)) {
+    return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+  }
 
   const before = await prisma.tenant.findUnique({ where: { id: params.tenantId }, select: { status: true } });
   if (!before) return NextResponse.json({ error: "School not found" }, { status: 404 });

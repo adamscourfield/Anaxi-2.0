@@ -1,0 +1,49 @@
+import { createHash, randomBytes } from "crypto";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { requireSuperAdminUser } from "@/lib/admin";
+
+function hashToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+export async function POST(req: Request, { params }: { params: { tenantId: string } }) {
+  const actor = await requireSuperAdminUser();
+  const form = await req.formData();
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
+  const fullName = String(form.get("fullName") ?? "").trim();
+
+  if (!email || !fullName) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+
+  const tenant = await prisma.tenant.findUnique({ where: { id: params.tenantId } });
+  if (!tenant) return NextResponse.json({ error: "School not found" }, { status: 404 });
+
+  const token = randomBytes(24).toString("hex");
+  const tokenHash = hashToken(token);
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+
+  await (prisma as any).schoolAdminInvite.create({
+    data: {
+      tenantId: tenant.id,
+      email,
+      fullName,
+      tokenHash,
+      expiresAt,
+      invitedByUserId: actor.id,
+    },
+  });
+
+  const inviteUrl = `${new URL(req.url).origin}/invite/${token}`;
+
+  await (prisma as any).auditLog.create({
+    data: {
+      tenantId: tenant.id,
+      actorUserId: actor.id,
+      action: "school.admin.invite.create",
+      targetType: "SchoolAdminInvite",
+      afterJson: { email, fullName, expiresAt, inviteUrl },
+    },
+  });
+
+  return NextResponse.redirect(new URL(`/god/schools/${tenant.id}?invite=${encodeURIComponent(inviteUrl)}`, req.url));
+}

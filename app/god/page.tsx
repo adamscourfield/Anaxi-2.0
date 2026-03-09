@@ -23,9 +23,12 @@ export default async function GodDashboardPage() {
           <h1 className="text-2xl font-semibold">God Mode</h1>
           <p className="text-sm text-muted">Platform-level school provisioning and module control.</p>
         </div>
-        <Link href="/god/schools/new" className="rounded bg-primaryBtn px-4 py-2 text-sm text-white hover:bg-primaryBtnHover">
-          + Create school
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/god/audit" className="rounded border border-border bg-surface px-4 py-2 text-sm hover:bg-divider">Audit log</Link>
+          <Link href="/god/schools/new" className="rounded bg-primaryBtn px-4 py-2 text-sm text-white hover:bg-primaryBtnHover">
+            + Create school
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

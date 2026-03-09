@@ -128,9 +128,9 @@ export default async function TeacherAnalysisPage({
               <tr className="border-b border-border bg-bg text-left text-xs font-medium text-muted">
                 <th className="px-4 py-3">Teacher</th>
                 <th className="px-4 py-3">Department(s)</th>
-                <th className="px-4 py-3">Coverage</th>
-                <th className="px-4 py-3">Drift status</th>
-                <th className="px-4 py-3">Drift score</th>
+                <th className="px-4 py-3" title="Number of observations in selected window">Coverage</th>
+                <th className="px-4 py-3" title="Direction of recent signal trend">Drift status</th>
+                <th className="px-4 py-3" title="Normalized decline score (higher means greater drift)">Drift score</th>
                 <th className="px-4 py-3">Last observed</th>
               </tr>
             </thead>

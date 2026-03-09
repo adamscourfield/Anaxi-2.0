@@ -238,16 +238,16 @@ export default async function StudentAnalysisPage({
             <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-bg text-left text-xs font-medium text-muted">
-                <th className="px-4 py-3">Student</th>
+                <th className="sticky left-0 z-20 bg-bg px-4 py-3">Student</th>
                 <th className="px-4 py-3">Year</th>
-                <th className="px-4 py-3">Band</th>
-                <th className="px-4 py-3 text-right">Score</th>
+                <th className="px-4 py-3" title="Overall risk priority from recent trend signals">Band</th>
+                <th className="px-4 py-3 text-right" title="Composite risk score used for prioritization">Score</th>
                 <th className="px-4 py-3">Key drivers</th>
-                <th className="px-4 py-3 text-right">Attendance</th>
-                <th className="px-4 py-3 text-right">Detentions Δ</th>
-                <th className="px-4 py-3 text-right">On calls Δ</th>
+                <th className="px-4 py-3 text-right" title="Current attendance percent with change vs baseline in brackets">Attendance (%)</th>
+                <th className="px-4 py-3 text-right" title="Change in detention count vs baseline window">Detentions Δ</th>
+                <th className="px-4 py-3 text-right" title="Change in on-call count vs baseline window">On calls Δ</th>
                 <th className="px-4 py-3">Flags</th>
-                <th className="px-4 py-3">Confidence</th>
+                <th className="px-4 py-3" title="Confidence in score based on data recency and coverage">Confidence</th>
               </tr>
             </thead>
             <tbody>
@@ -256,7 +256,7 @@ export default async function StudentAnalysisPage({
                   key={row.studentId}
                   className="border-b border-divider last:border-0 hover:bg-bg"
                 >
-                  <td className="px-4 py-3 font-medium text-text">
+                  <td className="sticky left-0 z-10 bg-surface px-4 py-3 font-medium text-text">
                     <Link
                       href={`/analysis/students/${row.studentId}?window=${windowDays}`}
                       className="hover:underline"

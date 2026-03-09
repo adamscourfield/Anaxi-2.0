@@ -191,10 +191,10 @@ export default async function CpdPrioritiesPage({
             <thead>
               <tr className="border-b border-border bg-bg text-left text-xs font-medium text-muted">
                 <th className="px-4 py-3">Signal</th>
-                <th className="px-4 py-3 text-right">Drift rate</th>
-                <th className="px-4 py-3 text-right">Avg negative delta</th>
-                <th className="px-4 py-3 text-right">Teachers covered</th>
-                <th className="px-4 py-3 text-right">Improving rate</th>
+                <th className="px-4 py-3 text-right" title="Percentage of covered teachers showing weakening">Drift rate (%)</th>
+                <th className="px-4 py-3 text-right" title="Average magnitude of decline where decline is present">Avg negative delta</th>
+                <th className="px-4 py-3 text-right" title="Teachers with sufficient observation volume in selected window">Teachers covered</th>
+                <th className="px-4 py-3 text-right" title="Percentage of covered teachers showing improvement">Improving rate (%)</th>
               </tr>
             </thead>
             <tbody>

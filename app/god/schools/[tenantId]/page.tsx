@@ -46,7 +46,12 @@ export default async function SchoolDetailPage({ params, searchParams }: { param
     <div className="max-w-3xl space-y-5">
       {searchParams?.invite ? (
         <div className="rounded border border-emerald-300 bg-emerald-50 p-3 text-sm">
-          Invite link: <a className="underline" href={decodeURIComponent(searchParams.invite)}>{decodeURIComponent(searchParams.invite)}</a>
+          <div className="font-medium text-emerald-800">Invite created.</div>
+          <div className="text-emerald-800/90">Copy this one-time link and send it securely to the admin.</div>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs underline">Show invite link</summary>
+            <div className="mt-1 break-all text-xs">{decodeURIComponent(searchParams.invite)}</div>
+          </details>
         </div>
       ) : null}
       <div>

@@ -59,6 +59,12 @@ export type AppPermission =
   | AdminPermission;
 
 const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
+  SUPER_ADMIN: [
+    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel",
+    "import:write", "students:read", "students:write",
+    "meetings:create", "meetings:view_own", "meetings:view_all", "meetings:edit", "meetings:delete",
+    "actions:create", "actions:manage", "actions:view_own",
+  ],
   ADMIN: [
     "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel",
     "import:write", "students:read", "students:write",

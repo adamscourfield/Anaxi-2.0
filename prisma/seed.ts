@@ -13,8 +13,8 @@ const FEATURES = [
 async function main() {
   const tenant = await prisma.tenant.upsert({
     where: { id: "tenant_demo" },
-    update: { name: "Demo School" },
-    create: { id: "tenant_demo", name: "Demo School" }
+    update: { name: "Demo School", slug: "demo-school", status: "ACTIVE" },
+    create: { id: "tenant_demo", name: "Demo School", slug: "demo-school", status: "ACTIVE" }
   });
 
   const passwordHash = await bcrypt.hash("Password123!", 10);
@@ -22,6 +22,12 @@ async function main() {
     where: { tenantId_email: { tenantId: tenant.id, email: "admin@demo.school" } },
     update: { fullName: "Admin User", role: "ADMIN", isActive: true, canApproveAllLoa: true, receivesOnCallEmails: true, passwordHash },
     create: { tenantId: tenant.id, email: "admin@demo.school", fullName: "Admin User", role: "ADMIN", isActive: true, canApproveAllLoa: true, receivesOnCallEmails: true, passwordHash }
+  });
+
+  await (prisma as any).user.upsert({
+    where: { tenantId_email: { tenantId: tenant.id, email: "god@anaxi.local" } },
+    update: { fullName: "Platform Super Admin", role: "SUPER_ADMIN", isActive: true, passwordHash },
+    create: { tenantId: tenant.id, email: "god@anaxi.local", fullName: "Platform Super Admin", role: "SUPER_ADMIN", isActive: true, passwordHash },
   });
 
   // Demo teachers for analysis

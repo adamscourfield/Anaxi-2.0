@@ -24,6 +24,8 @@ export const config = {
     "/api/students/:path*",
     "/api/on-call/:path*",
     "/api/email/:path*",
-    "/api/csv/:path*"
+    "/api/csv/:path*",
+    "/god/:path*",
+    "/api/god/:path*"
   ]
 };

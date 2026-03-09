@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { MetaText } from "@/components/ui/typography";
 
@@ -32,8 +33,15 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-[78vh] w-full max-w-md flex-col items-center justify-center gap-6 px-4">
       <div className="text-center">
-        <p className="text-4xl leading-none text-primaryBtn">⌁</p>
-        <p className="mt-2 text-[42px] font-semibold tracking-[-0.03em] text-text">Anaxi</p>
+        <Image
+          src="/anaxi-logo.png"
+          alt="Anaxi logo"
+          width={72}
+          height={72}
+          priority
+          className="mx-auto h-[72px] w-[72px] object-contain"
+        />
+        <p className="mt-3 text-[42px] font-semibold tracking-[-0.03em] text-text">Anaxi</p>
         <p className="mt-1 text-sm text-muted">Future Education</p>
       </div>
 

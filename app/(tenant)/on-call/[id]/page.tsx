@@ -7,12 +7,13 @@ import { OnCallDetail } from "@/components/oncall/OnCallDetail";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
+import { REQUEST_TYPE_LABELS } from "@/modules/oncall/types";
 
 export default async function OnCallDetailPage({ params }: { params: { id: string } }) {
   const user = await getSessionUserOrThrow();
   await requireFeature(user.tenantId, "ON_CALL");
 
-  let request: any;
+  let request: Awaited<ReturnType<typeof getRequestDetail>>;
   try {
     request = await getRequestDetail(user.tenantId, params.id);
   } catch {
@@ -28,7 +29,7 @@ export default async function OnCallDetailPage({ params }: { params: { id: strin
     <div className="space-y-5">
       <PageHeader
         title="On call request"
-        subtitle={`${request.student.fullName} · ${request.requestType === "FIRST_AID" ? "First Aid" : "Behaviour"}`}
+        subtitle={`${request.student.fullName} · ${REQUEST_TYPE_LABELS[request.requestType as keyof typeof REQUEST_TYPE_LABELS] ?? request.requestType}`}
         actions={
           <Link href="/on-call">
             <Button variant="secondary">Back to inbox</Button>

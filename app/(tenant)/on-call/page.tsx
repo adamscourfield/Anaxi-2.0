@@ -29,7 +29,7 @@ export default async function OnCallHomePage() {
       />
 
       <OnCallInbox
-        requests={requests as any[]}
+        requests={requests}
         canAcknowledge={canAcknowledge}
         canResolve={canResolve}
       />

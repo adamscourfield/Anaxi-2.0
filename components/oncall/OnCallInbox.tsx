@@ -47,8 +47,22 @@ const STATUS_TABS: { key: string; label: string }[] = [
 
 function InboxRow({ r, canAcknowledge, canResolve }: { r: InboxRequest; canAcknowledge?: boolean; canResolve?: boolean }) {
   const router = useRouter();
+  const [actionPending, setActionPending] = useState<string | null>(null);
   const showAck = canAcknowledge && r.status === "OPEN";
   const showResolve = canResolve && (r.status === "OPEN" || r.status === "ACKNOWLEDGED");
+
+  async function handleAction(action: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    setActionPending(action);
+    try {
+      const res = await fetch(`/api/oncall/${r.id}/${action}`, { method: "POST" });
+      if (res.ok) {
+        router.refresh();
+      }
+    } finally {
+      setActionPending(null);
+    }
+  }
 
   return (
     <div
@@ -84,14 +98,26 @@ function InboxRow({ r, canAcknowledge, canResolve }: { r: InboxRequest; canAckno
         {(showAck || showResolve) && (
           <div className="flex items-center gap-2">
             {showAck && (
-              <form method="POST" action={`/api/oncall/${r.id}/acknowledge`} onClick={(e) => e.stopPropagation()}>
-                <Button type="submit" variant="secondary" className="min-h-[36px] px-3 text-xs">Acknowledge</Button>
-              </form>
+              <Button
+                type="button"
+                variant="secondary"
+                className="min-h-[36px] px-3 text-xs"
+                disabled={actionPending === "acknowledge"}
+                onClick={(e) => handleAction("acknowledge", e)}
+              >
+                {actionPending === "acknowledge" ? "…" : "Acknowledge"}
+              </Button>
             )}
             {showResolve && (
-              <form method="POST" action={`/api/oncall/${r.id}/resolve`} onClick={(e) => e.stopPropagation()}>
-                <Button type="submit" variant="secondary" className="min-h-[36px] px-3 text-xs">Resolve</Button>
-              </form>
+              <Button
+                type="button"
+                variant="secondary"
+                className="min-h-[36px] px-3 text-xs"
+                disabled={actionPending === "resolve"}
+                onClick={(e) => handleAction("resolve", e)}
+              >
+                {actionPending === "resolve" ? "…" : "Resolve"}
+              </Button>
             )}
           </div>
         )}

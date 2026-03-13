@@ -1,23 +1,32 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { OnCallStatusBadge } from "./OnCallStatusBadge";
 import { REQUEST_TYPE_LABELS } from "@/modules/oncall/types";
 
+type OnCallStatus = "OPEN" | "ACKNOWLEDGED" | "RESOLVED" | "CANCELLED";
+type RequestType = "BEHAVIOUR" | "FIRST_AID";
+
+interface OnCallDetailRequest {
+  id: string;
+  requestType: RequestType;
+  location: string;
+  behaviourReasonCategory?: string | null;
+  notes?: string | null;
+  status: OnCallStatus;
+  createdAt: Date | string;
+  acknowledgedAt?: Date | string | null;
+  resolvedAt?: Date | string | null;
+  requester: { fullName: string; email: string };
+  student: { fullName: string; upn: string; yearGroup?: string | null };
+  responder?: { fullName: string } | null;
+}
+
 interface OnCallDetailProps {
-  request: {
-    id: string;
-    requestType: "BEHAVIOUR" | "FIRST_AID";
-    location: string;
-    behaviourReasonCategory?: string | null;
-    notes?: string | null;
-    status: "OPEN" | "ACKNOWLEDGED" | "RESOLVED" | "CANCELLED";
-    createdAt: Date | string;
-    acknowledgedAt?: Date | string | null;
-    resolvedAt?: Date | string | null;
-    requester: { fullName: string; email: string };
-    student: { fullName: string; upn: string; yearGroup?: string | null };
-    responder?: { fullName: string } | null;
-  };
+  request: OnCallDetailRequest;
   canAcknowledge?: boolean;
   canResolve?: boolean;
   canCancel?: boolean;
@@ -39,10 +48,25 @@ function DetailRow({ label, value }: { label: string; value: string | null | und
 }
 
 export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }: OnCallDetailProps) {
+  const router = useRouter();
+  const [actionPending, setActionPending] = useState<string | null>(null);
+
   const showActions =
     (canAcknowledge && request.status === "OPEN") ||
     (canResolve && (request.status === "OPEN" || request.status === "ACKNOWLEDGED")) ||
     (canCancel && request.status === "OPEN");
+
+  async function handleAction(action: "acknowledge" | "resolve" | "cancel") {
+    setActionPending(action);
+    try {
+      const res = await fetch(`/api/oncall/${request.id}/${action}`, { method: "POST" });
+      if (res.ok) {
+        router.refresh();
+      }
+    } finally {
+      setActionPending(null);
+    }
+  }
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -95,19 +119,34 @@ export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }:
       {showActions && (
         <div className="flex flex-wrap gap-3">
           {canAcknowledge && request.status === "OPEN" && (
-            <form method="POST" action={`/api/oncall/${request.id}/acknowledge`}>
-              <Button type="submit">Acknowledge</Button>
-            </form>
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={actionPending === "acknowledge"}
+              onClick={() => handleAction("acknowledge")}
+            >
+              {actionPending === "acknowledge" ? "Acknowledging…" : "Acknowledge"}
+            </Button>
           )}
           {canResolve && (request.status === "OPEN" || request.status === "ACKNOWLEDGED") && (
-            <form method="POST" action={`/api/oncall/${request.id}/resolve`}>
-              <Button type="submit" variant="secondary">Resolve</Button>
-            </form>
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={actionPending === "resolve"}
+              onClick={() => handleAction("resolve")}
+            >
+              {actionPending === "resolve" ? "Resolving…" : "Resolve"}
+            </Button>
           )}
           {canCancel && request.status === "OPEN" && (
-            <form method="POST" action={`/api/oncall/${request.id}/cancel`}>
-              <Button type="submit" variant="ghost">Cancel request</Button>
-            </form>
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={actionPending === "cancel"}
+              onClick={() => handleAction("cancel")}
+            >
+              {actionPending === "cancel" ? "Cancelling…" : "Cancel request"}
+            </Button>
           )}
         </div>
       )}

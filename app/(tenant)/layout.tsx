@@ -5,6 +5,12 @@ import { SchoolSwitcher } from "@/components/school-switcher";
 import { getOpenOnCallCount } from "@/lib/oncall/badge";
 import { canManageLoa } from "@/lib/loa";
 import { hasPermission } from "@/lib/rbac";
+import { FeatureKey } from "@/lib/types";
+
+type PrismaWithLOA = typeof prisma & {
+  lOARequest: { count: (args: { where: Record<string, unknown> }) => Promise<number> };
+};
+const db = prisma as PrismaWithLOA;
 
 function userInitials(name: string): string {
   return name
@@ -33,14 +39,14 @@ export default async function TenantLayout({ children }: { children: React.React
   const [onCallCount, leaveCount] = await Promise.all([
     canSeeOnCallBadge ? getOpenOnCallCount(user.tenantId) : Promise.resolve(0),
     isApprover
-      ? (prisma as any).lOARequest.count({ where: { tenantId: user.tenantId, status: "PENDING", requesterId: { not: user.id } } })
+      ? db.lOARequest.count({ where: { tenantId: user.tenantId, status: "PENDING", requesterId: { not: user.id } } })
       : Promise.resolve(0),
   ]);
 
   const initials = userInitials(user.fullName || user.email || "?");
 
   const tenantName = tenant?.name || "School";
-  const tenantOptions = otherMemberships.map((m: any) => ({
+  const tenantOptions = otherMemberships.map((m) => ({
     tenantId: m.tenantId,
     tenantName: m.tenant?.name || m.tenantId,
     isCurrent: m.tenantId === user.tenantId,
@@ -50,7 +56,7 @@ export default async function TenantLayout({ children }: { children: React.React
     <>
       <TenantNav
         role={user.role}
-        enabledFeatures={features.map((f: any) => f.key as any)}
+        enabledFeatures={features.map((f) => f.key as FeatureKey)}
         onCallCount={onCallCount}
         leaveCount={leaveCount}
       />

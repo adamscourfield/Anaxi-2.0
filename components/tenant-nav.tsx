@@ -186,10 +186,7 @@ export function TenantNav({
             <Image src="/anaxi-logo.png" alt="Anaxi" width={22} height={22} priority className="h-[22px] w-[22px] object-contain" />
           </span>
           {!collapsed && (
-            <span className="flex flex-col leading-none">
-              <span className="text-[15px] font-bold tracking-[-0.02em] text-text">Anaxi</span>
-              <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-muted/70">School Ops</span>
-            </span>
+            <span className="text-[15px] font-bold tracking-[-0.02em] text-text">Anaxi</span>
           )}
         </Link>
       </div>

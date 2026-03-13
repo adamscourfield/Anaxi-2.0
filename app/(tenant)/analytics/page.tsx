@@ -60,11 +60,9 @@ const CONFIDENCE_PILL: Record<Confidence, string> = {
 function TabBar({
   activeTab,
   windowDays,
-  searchParams,
 }: {
   activeTab: Tab;
   windowDays: number;
-  searchParams: Record<string, string | string[] | undefined>;
 }) {
   return (
     <div className="flex gap-1 rounded-lg border border-border bg-surface p-1">
@@ -790,7 +788,7 @@ export default async function AnalyticsPage({
       <H1>Analytics</H1>
 
       <div className="flex flex-wrap items-center gap-4">
-        <TabBar activeTab={activeTab} windowDays={windowDays} searchParams={searchParams ?? {}} />
+        <TabBar activeTab={activeTab} windowDays={windowDays} />
         <WindowSelector
           windowDays={windowDays}
           activeTab={activeTab}

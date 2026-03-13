@@ -259,13 +259,12 @@ function LeadershipHome({
                 <li key={row.studentId}>
                   <Link href={`/analysis/students/${row.studentId}?window=${windowDays}`} className="block rounded-lg p-3 hover:bg-bg/60 calm-transition">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-text">{row.studentName}</p>
-                        <MetaText>{row.yearGroup || "—"}</MetaText>
-                      </div>
+                      <p className="min-w-0 text-sm font-medium text-text truncate">
+                        {row.studentName}{row.yearGroup ? <span className="ml-1 font-normal text-muted">· {row.yearGroup}</span> : null}
+                      </p>
                       <StatusPill variant={row.band === "URGENT" ? "error" : "warning"}>{row.band === "URGENT" ? "Urgent" : "Priority"}</StatusPill>
                     </div>
-                    {row.drivers.length > 0 && <div className="mt-2"><DriverChips drivers={row.drivers} max={3} /></div>}
+                    {row.drivers.length > 0 && <div className="mt-1.5"><DriverChips drivers={row.drivers} max={3} /></div>}
                   </Link>
                 </li>
               ))}
@@ -523,15 +522,13 @@ function TeacherHome({
           accent="accent"
           href={`/observe/history?teacherId=${userId}&window=${windowDays}`}
         />
-        {hasMeetingsFeature && (
-          <StatCard
-            label="Open actions"
-            value={actionCount}
-            context={actionCount > 0 ? `${actionCount} action${actionCount !== 1 ? "s" : ""} assigned` : "All caught up"}
-            accent={actionCount > 0 ? "warning" : "success"}
-            href="/my-actions"
-          />
-        )}
+        <StatCard
+          label="Open actions"
+          value={hasMeetingsFeature ? actionCount : "—"}
+          context={hasMeetingsFeature ? (actionCount > 0 ? `${actionCount} action${actionCount !== 1 ? "s" : ""} assigned` : "All caught up") : "Meetings not enabled"}
+          accent={hasMeetingsFeature && actionCount > 0 ? "warning" : "success"}
+          href={hasMeetingsFeature ? "/my-actions" : undefined}
+        />
       </div>
 
       <section className="space-y-3">

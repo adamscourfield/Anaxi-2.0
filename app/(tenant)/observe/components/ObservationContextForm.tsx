@@ -37,7 +37,7 @@ export function ObservationContextForm({ teachers, draftKey, signalKeys }: { tea
     <Card className="mx-auto max-w-xl space-y-4">
       <div className="flex items-center justify-between">
         <Button type="button" variant="ghost" onClick={() => router.back()}>Back</Button>
-        <Button type="button" variant="ghost" onClick={() => router.push("/tenant/observe")}>Close</Button>
+        <Button type="button" variant="ghost" onClick={() => router.push("/observe/history")}>Close</Button>
       </div>
       <H1>New observation</H1>
 
@@ -97,7 +97,7 @@ export function ObservationContextForm({ teachers, draftKey, signalKeys }: { tea
         disabled={!canContinue}
         onClick={() => {
           persistDraft(draftKey, { context, signalState: loadDraft(draftKey, signalKeys).signalState });
-          router.push("/tenant/observe/new/signals");
+          router.push("/observe/new/signals");
         }}
         className="w-full"
       >

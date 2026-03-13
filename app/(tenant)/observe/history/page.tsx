@@ -122,7 +122,7 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
           <ul className="divide-y divide-border/70 p-3 text-sm">
             {(observations as any[]).map((observation) => (
               <li key={observation.id} className="px-1 py-2">
-                <Link className="font-medium text-accent hover:text-accentHover" href={`/tenant/observe/${observation.id}`}>
+                <Link className="font-medium text-accent hover:text-accentHover" href={`/observe/${observation.id}`}>
                   {new Date(observation.observedAt).toLocaleDateString()} · {observation.subject} · {observation.yearGroup} · {observation.observedTeacher?.fullName} · by {observation.observer?.fullName}
                 </Link>
               </li>

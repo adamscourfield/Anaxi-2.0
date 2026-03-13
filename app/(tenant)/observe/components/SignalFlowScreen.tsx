@@ -63,16 +63,16 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
   const currentSignal = orderedSignals.list[currentIndex];
 
   if (!hasContext) {
-    router.replace("/tenant/observe/new");
+    router.replace("/observe/new");
     return null;
   }
 
-  const goToIndex = (index: number) => router.push(`/tenant/observe/new/signals?index=${Math.max(0, Math.min(index, total - 1))}`);
+  const goToIndex = (index: number) => router.push(`/observe/new/signals?index=${Math.max(0, Math.min(index, total - 1))}`);
 
   const advance = () => {
     const nextIndex = currentIndex + 1;
     if (nextIndex >= total) {
-      router.push("/tenant/observe/new/review");
+      router.push("/observe/new/review");
       return;
     }
 
@@ -120,7 +120,7 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
         onExit={() => {
           if (window.confirm("Discard observation?")) {
             clearDraft(draftKey);
-            router.push("/tenant/observe");
+            router.push("/observe/history");
           }
         }}
       />
@@ -175,7 +175,7 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
                     if (!state.valueKey && !state.notObserved) next.signalState[signal.key] = { valueKey: null, notObserved: true };
                   }
                   persistDraft(draftKey, next);
-                  router.push("/tenant/observe/new/review");
+                  router.push("/observe/new/review");
                 }}
               >
                 Mark remaining as Skipped

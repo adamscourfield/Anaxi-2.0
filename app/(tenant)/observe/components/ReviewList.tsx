@@ -62,7 +62,7 @@ export function ReviewList({
                 key={signal.key}
                 type="button"
                 className="flex w-full items-center justify-between p-2 text-sm"
-                onClick={() => router.push(`/tenant/observe/new/signals?index=${index}`)}
+                onClick={() => router.push(`/observe/new/signals?index=${index}`)}
               >
                 <span>{displayName}</span>
                 <span className="text-xs text-muted">{selectedLabel}</span>

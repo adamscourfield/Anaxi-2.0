@@ -207,7 +207,11 @@ export function TenantNav({
               )}
               <ul className="space-y-0.5">
                 {section.items.map((item) => {
-                  const active = pathname?.startsWith(item.href);
+                  const active = item.href === "/home" || item.href === "/my-actions"
+                    ? pathname === item.href
+                    : item.href === "/admin"
+                      ? pathname === "/admin"
+                      : pathname?.startsWith(item.href);
                   const showBadge = (item.badgeCount ?? 0) > 0;
                   return (
                     <li key={item.href}>

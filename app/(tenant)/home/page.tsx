@@ -143,7 +143,7 @@ function LeadershipHome({
           href={`/analytics?tab=cpd&window=${windowDays}`}
         />
         <StatCard
-          label="Pending leave / on-call"
+          label={hasLeaveFeature && openOnCallCount > 0 ? "Pending leave / on-call" : hasLeaveFeature ? "Pending leave" : "Open on-call"}
           value={operationalCount}
           context={
             operationalCount > 0

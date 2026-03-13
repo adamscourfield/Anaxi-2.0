@@ -43,7 +43,6 @@ const STATUS_TABS: { key: string; label: string }[] = [
   { key: "OPEN", label: "Open" },
   { key: "ACKNOWLEDGED", label: "Acknowledged" },
   { key: "RESOLVED", label: "Resolved" },
-  { key: "CANCELLED", label: "Cancelled" },
 ];
 
 function InboxRow({ r, canAcknowledge, canResolve }: { r: InboxRequest; canAcknowledge?: boolean; canResolve?: boolean }) {
@@ -57,9 +56,11 @@ function InboxRow({ r, canAcknowledge, canResolve }: { r: InboxRequest; canAckno
       tabIndex={0}
       onClick={() => router.push(`/on-call/${r.id}`)}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/on-call/${r.id}`); } }}
-      className="group flex items-center gap-4 rounded-xl border border-border bg-white p-4 shadow-sm calm-transition hover:border-accent/30 hover:shadow-md cursor-pointer"
+      className="group flex flex-col gap-3 rounded-xl border border-border bg-white p-4 shadow-sm calm-transition hover:border-accent/30 hover:shadow-md cursor-pointer sm:flex-row sm:items-center sm:gap-4"
     >
-      <Avatar name={r.student.fullName} size="md" />
+      <div className="hidden sm:block">
+        <Avatar name={r.student.fullName} size="md" />
+      </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -68,6 +69,7 @@ function InboxRow({ r, canAcknowledge, canResolve }: { r: InboxRequest; canAckno
             <span className="text-xs text-muted">{r.student.yearGroup}</span>
           )}
           <OnCallStatusBadge status={r.status} />
+          <span className="text-xs text-muted sm:hidden">{timeAgo(r.createdAt)}</span>
         </div>
         <p className="mt-0.5 text-xs text-muted">
           {REQUEST_TYPE_LABELS[r.requestType]} · {r.location} · raised by {r.requester.fullName}
@@ -77,18 +79,18 @@ function InboxRow({ r, canAcknowledge, canResolve }: { r: InboxRequest; canAckno
         )}
       </div>
 
-      <div className="flex shrink-0 flex-col items-end gap-2">
-        <span className="text-xs font-medium text-muted">{timeAgo(r.createdAt)}</span>
+      <div className="flex shrink-0 items-center justify-between gap-3 sm:flex-col sm:items-end sm:gap-2">
+        <span className="hidden text-xs font-medium text-muted sm:block">{timeAgo(r.createdAt)}</span>
         {(showAck || showResolve) && (
           <div className="flex items-center gap-2">
             {showAck && (
               <form method="POST" action={`/api/oncall/${r.id}/acknowledge`} onClick={(e) => e.stopPropagation()}>
-                <Button type="submit" className="px-3 py-1.5 text-xs">Acknowledge</Button>
+                <Button type="submit" variant="secondary" className="min-h-[36px] px-3 text-xs">Acknowledge</Button>
               </form>
             )}
             {showResolve && (
               <form method="POST" action={`/api/oncall/${r.id}/resolve`} onClick={(e) => e.stopPropagation()}>
-                <Button type="submit" variant="secondary" className="px-3 py-1.5 text-xs">Resolve</Button>
+                <Button type="submit" variant="secondary" className="min-h-[36px] px-3 text-xs">Resolve</Button>
               </form>
             )}
           </div>

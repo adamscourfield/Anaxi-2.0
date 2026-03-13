@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FeatureKey, UserRole } from "@/lib/types";
 import { hasAnyPermission, hasPermission } from "@/lib/rbac";
 
@@ -110,6 +110,13 @@ export function TenantNav({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
+  useEffect(() => {
+    const content = document.getElementById("tenant-content");
+    if (content) {
+      content.style.marginLeft = collapsed ? "var(--sidebar-collapsed-width)" : "var(--sidebar-width)";
+    }
+  }, [collapsed]);
+
   const has = (feature: FeatureKey) => enabledFeatures.includes(feature);
   const canImport = hasPermission(role, "import:write");
   const canAccessAdmin = hasPermission(role, "admin:access");
@@ -129,24 +136,24 @@ export function TenantNav({
     {
       label: "Instruction",
       items: [
-        ...(has("OBSERVATIONS") ? [navItem("Observation feed", "/tenant/observe")] : []),
-        ...(has("OBSERVATIONS") ? [navItem("Signals history", "/tenant/observe/history")] : []),
+        ...(has("OBSERVATIONS") ? [navItem("Observation feed", "/observe")] : []),
+        ...(has("OBSERVATIONS") ? [navItem("Signals history", "/observe/history")] : []),
         ...(has("ANALYSIS") && canSeeAnalysis ? [navItem("Explorer", "/explorer")] : []),
       ],
     },
     {
       label: "Culture",
       items: [
-        ...(has("STUDENTS") ? [navItem("Students", "/tenant/students")] : []),
-        ...(has("STUDENTS_IMPORT") && canImport ? [navItem("Behaviour import", "/tenant/behaviour/import")] : []),
-        ...(has("ON_CALL") ? [navItem("On call", "/tenant/on-call", onCallCount)] : []),
+        ...(has("STUDENTS") ? [navItem("Students", "/students")] : []),
+        ...(has("STUDENTS_IMPORT") && canImport ? [navItem("Behaviour import", "/behaviour/import")] : []),
+        ...(has("ON_CALL") ? [navItem("On call", "/on-call", onCallCount)] : []),
       ],
     },
     {
       label: "Operations",
       items: [
-        ...(has("MEETINGS") ? [navItem("Meetings", "/tenant/meetings")] : []),
-        ...(has("LEAVE") ? [navItem("Leave of absence", "/tenant/leave", leaveCount)] : []),
+        ...(has("MEETINGS") ? [navItem("Meetings", "/meetings")] : []),
+        ...(has("LEAVE") ? [navItem("Leave of absence", "/leave", leaveCount)] : []),
       ],
     },
     {
@@ -160,19 +167,19 @@ export function TenantNav({
     {
       label: "Administration",
       items: [
-        ...(canAccessAdmin && has("ADMIN") ? [navItem("Admin dashboard", "/tenant/admin")] : []),
-        ...(canAccessAdminUsers && has("ADMIN") ? [navItem("User management", "/tenant/admin/users")] : []),
-        ...(canAccessAdminSettings && has("ADMIN") ? [navItem("Departments", "/tenant/admin/departments")] : []),
-        ...(canAccessAdminSettings && has("ADMIN") ? [navItem("Feature flags", "/tenant/admin/features")] : []),
+        ...(canAccessAdmin && has("ADMIN") ? [navItem("Admin dashboard", "/admin")] : []),
+        ...(canAccessAdminUsers && has("ADMIN") ? [navItem("User management", "/admin/users")] : []),
+        ...(canAccessAdminSettings && has("ADMIN") ? [navItem("Departments", "/admin/departments")] : []),
+        ...(canAccessAdminSettings && has("ADMIN") ? [navItem("Feature flags", "/admin/features")] : []),
       ],
     },
   ].filter((section) => section.items.length > 0);
 
-  const sidebarWidth = collapsed ? "w-[72px]" : "w-[260px]";
+  const sidebarWidth = collapsed ? "w-[var(--sidebar-collapsed-width)]" : "w-[var(--sidebar-width)]";
 
   return (
     <aside
-      className={`sticky top-0 flex h-screen shrink-0 flex-col border-r border-border bg-white calm-transition ${sidebarWidth}`}
+      className={`fixed left-0 top-0 z-30 flex h-screen flex-col border-r border-border bg-white calm-transition ${sidebarWidth}`}
       aria-label="Sidebar menu"
     >
       <div className={`flex items-center ${collapsed ? "justify-center px-2" : "px-5"} h-16 shrink-0`}>
@@ -261,17 +268,17 @@ export function TenantNav({
             <ChevronIcon direction="left" />
           </button>
         )}
-        {collapsed && (
-          <button
-            onClick={() => setCollapsed(false)}
-            className="absolute -right-3 top-20 inline-flex h-6 w-6 items-center justify-center rounded-full border border-border bg-white text-muted shadow-sm calm-transition hover:text-text"
-            type="button"
-            title="Expand navigation"
-          >
-            <ChevronIcon direction="right" />
-          </button>
-        )}
       </div>
+      {collapsed && (
+        <button
+          onClick={() => setCollapsed(false)}
+          className="absolute -right-3 top-20 z-40 inline-flex h-6 w-6 items-center justify-center rounded-full border border-border bg-white text-muted shadow-sm calm-transition hover:text-text"
+          type="button"
+          title="Expand navigation"
+        >
+          <ChevronIcon direction="right" />
+        </button>
+      )}
     </aside>
   );
 }

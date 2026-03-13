@@ -20,18 +20,18 @@ export default async function TenantLayout({ children }: { children: React.React
   ]);
 
   return (
-    <div className="flex min-h-screen">
+    <>
       <TenantNav
         role={user.role}
         enabledFeatures={features.map((f: any) => f.key as any)}
         onCallCount={onCallCount}
         leaveCount={leaveCount}
       />
-      <main className="min-w-0 flex-1 px-8 py-8 lg:px-10">
+      <main className="ml-[var(--sidebar-width)] min-h-screen px-8 py-8 lg:px-10 calm-transition" id="tenant-content">
         <div className="mx-auto max-w-[1400px]">
           {children}
         </div>
       </main>
-    </div>
+    </>
   );
 }

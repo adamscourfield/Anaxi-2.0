@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { getRequestDetail } from "@/modules/oncall/service";
 import { OnCallDetail } from "@/components/oncall/OnCallDetail";
-import { H1 } from "@/components/ui/typography";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
 export default async function OnCallDetailPage({ params }: { params: { id: string } }) {
@@ -24,7 +26,15 @@ export default async function OnCallDetailPage({ params }: { params: { id: strin
 
   return (
     <div className="space-y-5">
-      <H1>On Call Request</H1>
+      <PageHeader
+        title="On call request"
+        subtitle={`${request.student.fullName} · ${request.requestType === "FIRST_AID" ? "First Aid" : "Behaviour"}`}
+        actions={
+          <Link href="/on-call">
+            <Button variant="secondary">Back to inbox</Button>
+          </Link>
+        }
+      />
       <OnCallDetail
         request={request}
         canAcknowledge={canAcknowledge}

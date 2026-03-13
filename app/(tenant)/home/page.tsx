@@ -167,9 +167,18 @@ function LeadershipHome({
             <ul className="space-y-1">
               {topCpd.map((row) => (
                 <li key={row.signalKey}>
-                  <Link href={`/analysis/cpd/${row.signalKey}?window=${windowDays}`} className="block rounded-lg p-3 hover:bg-bg/60 calm-transition">
+                  <Link href={`/analysis/cpd/${row.signalKey}?window=${windowDays}`} className="block rounded-lg p-3 hover:bg-[#fe9f9f]/10 calm-transition">
                     <p className="text-sm font-medium text-text">{row.label}</p>
-                    <MetaText>{Math.round(row.driftRate * 100)}% drifting · {row.teachersCovered} covered</MetaText>
+                    <div className="mt-1.5 flex items-center gap-3">
+                      <span className="text-xs text-muted">{Math.round(row.driftRate * 100)}% drift rate</span>
+                      {row.avgNegDeltaAbs !== null && (
+                        <span className="text-xs text-muted">Avg Δ −{row.avgNegDeltaAbs.toFixed(2)}</span>
+                      )}
+                      <span className="text-xs text-muted">{row.teachersCovered} covered</span>
+                    </div>
+                    <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-[#fe9f9f]" style={{ width: `${Math.min(Math.round(row.driftRate * 100), 100)}%` }} />
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -179,7 +188,7 @@ function LeadershipHome({
 
         <Card className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-[14px] font-semibold text-text">Teacher support priorities</p>
+            <p className="text-[14px] font-semibold text-text">Teacher Support Priorities</p>
             <Link href={`/analytics?tab=teachers&window=${windowDays}`} className="text-[12px] text-accent hover:underline">View all →</Link>
           </div>
           {topTeachers.length === 0 ? (
@@ -188,7 +197,7 @@ function LeadershipHome({
             <ul className="space-y-1">
               {topTeachers.map((row) => (
                 <li key={row.teacherMembershipId}>
-                  <Link href={`/analysis/teachers/${row.teacherMembershipId}?window=${windowDays}`} className="flex items-center justify-between gap-3 rounded-lg p-3 hover:bg-bg/60 calm-transition">
+                  <Link href={`/analysis/teachers/${row.teacherMembershipId}?window=${windowDays}`} className="flex items-center justify-between gap-3 rounded-lg p-3 hover:bg-[#fe9f9f]/10 calm-transition">
                     <div className="flex items-center gap-3 min-w-0">
                       <Avatar name={row.teacherName} />
                       <div className="min-w-0">
@@ -196,7 +205,14 @@ function LeadershipHome({
                         <MetaText>{[row.departmentNames.length > 0 ? row.departmentNames.join(", ") : null, `${row.teacherCoverage} obs`].filter(Boolean).join(" · ")}</MetaText>
                       </div>
                     </div>
-                    <StatusPill variant={RISK_STATUS_PILL[row.status]}>{RISK_STATUS_LABELS[row.status]}</StatusPill>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {row.normalizedIDS !== 0 && (
+                        <span className={`text-xs tabular-nums ${row.normalizedIDS > 0 ? "text-green-600" : "text-[#fe9f9f]"}`}>
+                          {row.normalizedIDS > 0 ? "+" : ""}{row.normalizedIDS.toFixed(1)}
+                        </span>
+                      )}
+                      <StatusPill variant={RISK_STATUS_PILL[row.status]}>{RISK_STATUS_LABELS[row.status]}</StatusPill>
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -208,7 +224,7 @@ function LeadershipHome({
       <section className="grid gap-4 lg:grid-cols-2">
         <Card className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-[14px] font-semibold text-text">Cohort change</p>
+            <p className="text-[14px] font-semibold text-text">Cohort Change</p>
             <Link href={`/explorer?view=BEHAVIOUR_COHORTS_PIVOT&window=${windowDays}`} className="text-[12px] text-accent hover:underline">Explorer →</Link>
           </div>
           {!hasBehaviourData ? (
@@ -220,35 +236,55 @@ function LeadershipHome({
             <MetaText>No significant cohort changes detected.</MetaText>
           ) : (
             <ul className="space-y-1">
-              {cohortAlerts.map((row) => {
-                const headline =
-                  row.attendanceDelta !== null && row.attendanceDelta < -0.5
-                    ? `${row.yearGroup} attendance ↓`
-                    : row.onCallsDelta !== null && row.onCallsDelta > 0.1
-                    ? `${row.yearGroup} on-calls ↑`
-                    : row.yearGroup ?? "Year group";
-                const delta =
-                  row.attendanceDelta !== null && row.attendanceDelta < -0.5
-                    ? `${Math.abs(row.attendanceDelta).toFixed(1)}%`
-                    : row.onCallsDelta !== null && row.onCallsDelta > 0.1
-                    ? `+${row.onCallsDelta.toFixed(1)}`
-                    : null;
-                return (
-                  <li key={row.yearGroup}>
-                    <Link href={`/explorer?view=BEHAVIOUR_COHORTS_PIVOT&year=${encodeURIComponent(row.yearGroup ?? "")}&window=${windowDays}`} className="block rounded-lg p-3 hover:bg-bg/60 calm-transition">
-                      <p className="text-sm font-medium text-text">{headline}</p>
-                      <MetaText>{[delta, `${row.studentsCovered} students`].filter(Boolean).join(" · ")}</MetaText>
-                    </Link>
-                  </li>
-                );
-              })}
+              {cohortAlerts.map((row) => (
+                <li key={row.yearGroup}>
+                  <Link href={`/explorer?view=BEHAVIOUR_COHORTS_PIVOT&year=${encodeURIComponent(row.yearGroup ?? "")}&window=${windowDays}`} className="block rounded-lg p-3 hover:bg-[#fe9f9f]/10 calm-transition">
+                    <p className="text-sm font-medium text-text">{row.yearGroup ?? "Year group"}</p>
+                    <div className="mt-1.5 grid grid-cols-3 gap-2">
+                      <div className="text-center">
+                        <p className="text-xs text-muted">Attendance</p>
+                        <p className="text-sm font-medium tabular-nums text-text">
+                          {row.attendanceMean !== null ? `${row.attendanceMean.toFixed(1)}%` : "—"}
+                        </p>
+                        {row.attendanceDelta !== null && (
+                          <p className={`text-xs tabular-nums ${row.attendanceDelta < 0 ? "text-[#fe9f9f]" : "text-green-600"}`}>
+                            {row.attendanceDelta > 0 ? "+" : ""}{row.attendanceDelta.toFixed(1)}%
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-muted">Behaviour</p>
+                        <p className="text-sm font-medium tabular-nums text-text">
+                          {row.detentionsMean !== null ? row.detentionsMean.toFixed(1) : "—"}
+                        </p>
+                        {row.detentionsDelta !== null && (
+                          <p className={`text-xs tabular-nums ${row.detentionsDelta > 0 ? "text-[#fe9f9f]" : "text-green-600"}`}>
+                            {row.detentionsDelta > 0 ? "+" : ""}{row.detentionsDelta.toFixed(1)}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-muted">On calls</p>
+                        <p className="text-sm font-medium tabular-nums text-text">
+                          {row.onCallsMean !== null ? row.onCallsMean.toFixed(1) : "—"}
+                        </p>
+                        {row.onCallsDelta !== null && (
+                          <p className={`text-xs tabular-nums ${row.onCallsDelta > 0 ? "text-[#fe9f9f]" : "text-green-600"}`}>
+                            {row.onCallsDelta > 0 ? "+" : ""}{row.onCallsDelta.toFixed(1)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
             </ul>
           )}
         </Card>
 
         <Card className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-[14px] font-semibold text-text">Student support priorities</p>
+            <p className="text-[14px] font-semibold text-text">Student Support Priorities</p>
             <Link href={`/analytics?tab=students&window=${windowDays}`} className="text-[12px] text-accent hover:underline">View all →</Link>
           </div>
           {displayUrgentStudents.length === 0 ? (
@@ -257,12 +293,34 @@ function LeadershipHome({
             <ul className="space-y-1">
               {displayUrgentStudents.map((row) => (
                 <li key={row.studentId}>
-                  <Link href={`/analysis/students/${row.studentId}?window=${windowDays}`} className="block rounded-lg p-3 hover:bg-bg/60 calm-transition">
+                  <Link href={`/analysis/students/${row.studentId}?window=${windowDays}`} className="block rounded-lg p-3 hover:bg-[#fe9f9f]/10 calm-transition">
                     <div className="flex items-center justify-between gap-2">
                       <p className="min-w-0 text-sm font-medium text-text truncate">
                         {row.studentName}{row.yearGroup ? <span className="ml-1 font-normal text-muted">· {row.yearGroup}</span> : null}
                       </p>
                       <StatusPill variant={row.band === "URGENT" ? "error" : "warning"}>{row.band === "URGENT" ? "Urgent" : "Priority"}</StatusPill>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-muted">
+                      {row.attendancePct !== null && (
+                        <span>
+                          Attendance: {row.attendancePct.toFixed(1)}%
+                          {row.attendanceDelta !== null && (
+                            <span className={`ml-1 ${row.attendanceDelta < 0 ? "text-[#fe9f9f]" : "text-green-600"}`}>
+                              ({row.attendanceDelta > 0 ? "+" : ""}{row.attendanceDelta.toFixed(1)})
+                            </span>
+                          )}
+                        </span>
+                      )}
+                      {row.onCallsDelta !== null && (
+                        <span>
+                          On calls: <span className={row.onCallsDelta > 0 ? "text-[#fe9f9f]" : "text-green-600"}>{row.onCallsDelta > 0 ? "+" : ""}{row.onCallsDelta}</span>
+                        </span>
+                      )}
+                      {row.detentionsDelta !== null && (
+                        <span>
+                          Detentions: <span className={row.detentionsDelta > 0 ? "text-[#fe9f9f]" : "text-green-600"}>{row.detentionsDelta > 0 ? "+" : ""}{row.detentionsDelta}</span>
+                        </span>
+                      )}
                     </div>
                     {row.drivers.length > 0 && <div className="mt-1.5"><DriverChips drivers={row.drivers} max={3} /></div>}
                   </Link>
@@ -272,15 +330,6 @@ function LeadershipHome({
           )}
         </Card>
       </section>
-
-      {hasLeaveFeature && (
-        <Card className="flex flex-wrap items-center gap-4 py-3 px-5">
-          <span className="text-[13px] font-medium text-text">Quick links</span>
-          <Link href="/leave/pending" className="text-[13px] text-accent hover:underline">Pending leave →</Link>
-          <Link href="/leave/calendar" className="text-[13px] text-accent hover:underline">Leave calendar →</Link>
-          <Link href="/explorer" className="text-[13px] text-accent hover:underline">Explorer →</Link>
-        </Card>
-      )}
     </div>
   );
 }

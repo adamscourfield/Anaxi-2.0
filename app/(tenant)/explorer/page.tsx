@@ -358,37 +358,67 @@ export default async function ExplorerPage({
     <div className="space-y-6">
       <PageHeader
         title="Explorer"
-        subtitle={<>Updated {computedAtStr} · Window: last {windowDays} days · Coverage thresholds applied</>}
-        actions={<span className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs text-muted">Evidence &amp; pivots</span>}
+        subtitle={<>Updated {computedAtStr}</>}
       />
 
-      {/* Filters panel */}
+      {/* Combined filters and view selector */}
       <Card>
-        <form method="GET" action="/explorer" className="space-y-3">
+        <form method="GET" action="/explorer" className="space-y-5">
           <input type="hidden" name="view" value={view} />
-          <div className="flex flex-wrap items-end gap-3">
-            {/* Window selector */}
-            <div className="flex flex-col gap-1">
-              <MetaText>Window</MetaText>
-              <div className="flex gap-1">
-                {WINDOW_OPTIONS.map((w) => (
+
+          {/* View selector tabs */}
+          <div className="inline-flex items-center rounded-lg border border-border bg-[#f4f7fb] p-0.5 flex-wrap">
+            {(["INSTRUCTION_TEACHERS_PIVOT", "INSTRUCTION_DEPARTMENTS_PIVOT", "INSTRUCTION_LIST", "TEACHER_PRIORITIES", "CPD_SIGNALS"] as ViewMode[]).map((v) => (
+              <Link
+                key={v}
+                href={buildFilterQuery({ view: v })}
+                className={`rounded-md px-3.5 py-1.5 text-sm font-medium calm-transition ${
+                  v === view
+                    ? "bg-white text-text shadow-sm"
+                    : "text-muted hover:text-text"
+                }`}
+              >
+                {VIEW_LABELS[v]}
+              </Link>
+            ))}
+            {canSeeBehaviour && (
+              <>
+                <span className="mx-1 h-5 w-px bg-border/60" />
+                {(["BEHAVIOUR_STUDENTS_TABLE", "BEHAVIOUR_COHORTS_PIVOT"] as ViewMode[]).map((v) => (
                   <Link
-                    key={w}
-                    href={buildFilterQuery({ windowDays: String(w) })}
-                    className={`calm-transition rounded-lg border px-3 py-1.5 text-sm font-medium transition duration-200 ease-calm ${
-                      w === windowDays
-                        ? "border-accent bg-[var(--accent-tint)] text-text"
-                        : "border-border bg-surface text-text hover:border-accentHover"
+                    key={v}
+                    href={buildFilterQuery({ view: v })}
+                    className={`rounded-md px-3.5 py-1.5 text-sm font-medium calm-transition ${
+                      v === view
+                        ? "bg-white text-text shadow-sm"
+                        : "text-muted hover:text-text"
                     }`}
                   >
-                    {w}d
+                    {VIEW_LABELS[v]}
                   </Link>
                 ))}
-              </div>
+              </>
+            )}
+          </div>
+
+          {/* Filters row */}
+          <div className="flex flex-wrap items-end gap-4">
+            {/* Window selector */}
+            <div className="flex flex-col gap-2">
+              <MetaText>Window</MetaText>
+              <select
+                name="windowDays"
+                defaultValue={String(windowDays)}
+                className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-text"
+              >
+                {WINDOW_OPTIONS.map((w) => (
+                  <option key={w} value={String(w)}>{w} days</option>
+                ))}
+              </select>
             </div>
 
             {/* Department filter */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <MetaText>Department</MetaText>
               <select
                 name="departmentId"
@@ -405,7 +435,7 @@ export default async function ExplorerPage({
             </div>
 
             {/* Year group filter */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <MetaText>Year group</MetaText>
               <select
                 name="yearGroup"
@@ -423,7 +453,7 @@ export default async function ExplorerPage({
 
             {/* Subject filter (for observation list) */}
             {view === "INSTRUCTION_LIST" && (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <MetaText>Subject</MetaText>
                 <input
                   type="text"
@@ -437,7 +467,7 @@ export default async function ExplorerPage({
 
             {/* Student search (behaviour views) */}
             {isBehaviourView && (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <MetaText>Student search</MetaText>
                 <input
                   type="text"
@@ -449,7 +479,7 @@ export default async function ExplorerPage({
               </div>
             )}
 
-            <Button type="submit" variant="secondary" className="px-4 py-1.5">Apply</Button>
+            <Button type="submit" className="px-4 py-1.5">Apply</Button>
 
             <Link
               href={`/explorer?view=${view}&windowDays=${windowDays}`}
@@ -461,87 +491,32 @@ export default async function ExplorerPage({
         </form>
       </Card>
 
-      {/* View selector */}
-      <div className="inline-flex items-center rounded-lg border border-border bg-[#f4f7fb] p-0.5 flex-wrap">
-        {(["INSTRUCTION_TEACHERS_PIVOT", "INSTRUCTION_DEPARTMENTS_PIVOT", "INSTRUCTION_LIST", "TEACHER_PRIORITIES", "CPD_SIGNALS"] as ViewMode[]).map((v) => (
-          <Link
-            key={v}
-            href={buildFilterQuery({ view: v })}
-            className={`rounded-md px-3.5 py-1.5 text-sm font-medium calm-transition ${
-              v === view
-                ? "bg-white text-text shadow-sm"
-                : "text-muted hover:text-text"
-            }`}
-          >
-            {VIEW_LABELS[v]}
-          </Link>
-        ))}
-        {canSeeBehaviour && (
-          <>
-            <span className="mx-1 h-5 w-px bg-border/60" />
-            {(["BEHAVIOUR_STUDENTS_TABLE", "BEHAVIOUR_COHORTS_PIVOT"] as ViewMode[]).map((v) => (
-              <Link
-                key={v}
-                href={buildFilterQuery({ view: v })}
-                className={`rounded-md px-3.5 py-1.5 text-sm font-medium calm-transition ${
-                  v === view
-                    ? "bg-white text-text shadow-sm"
-                    : "text-muted hover:text-text"
-                }`}
-              >
-                {VIEW_LABELS[v]}
-              </Link>
-            ))}
-          </>
-        )}
-      </div>
-
-      {/* Export button + density toggle */}
-      <div className="flex flex-wrap items-center gap-3">
-        {/* Density toggle */}
-        {(view === "INSTRUCTION_TEACHERS_PIVOT" || view === "INSTRUCTION_DEPARTMENTS_PIVOT") && (
-          <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-0.5">
-            {(["comfortable", "compact"] as const).map((d) => (
-              <Link
-                key={d}
-                href={buildFilterQuery({ density: d })}
-                className={`calm-transition rounded-md px-3 py-1 text-xs font-medium transition duration-200 ease-calm ${
-                  d === density
-                    ? "bg-[var(--accent-tint)] text-text"
-                    : "text-muted hover:text-text"
-                }`}
-              >
-                {d === "comfortable" ? "Comfortable" : "Compact"}
-              </Link>
-            ))}
-          </div>
-        )}
-        {canExport ? (
-          <form action="/api/explorer/export" method="POST">
-            <input type="hidden" name="view" value={view} />
-            <input type="hidden" name="windowDays" value={String(windowDays)} />
-            <input type="hidden" name="departmentId" value={filterDepartmentId} />
-            <input type="hidden" name="yearGroup" value={filterYearGroup} />
-            <input type="hidden" name="teacherMembershipId" value={filterTeacherId} />
-            <input type="hidden" name="subject" value={filterSubject} />
-            <input type="hidden" name="studentSearch" value={studentSearch} />
-            <Button type="submit" variant="secondary">Export CSV</Button>
-          </form>
-        ) : (
-          <span className="cursor-not-allowed rounded-lg border border-border bg-bg px-4 py-2 text-sm text-muted" title="Export not available for your role">
-            Export CSV
-          </span>
-        )}
-      </div>
-
       {/* ── Results area ──────────────────────────────────────────────────────── */}
 
       {/* INSTRUCTION_TEACHERS_PIVOT */}
       {view === "INSTRUCTION_TEACHERS_PIVOT" && (
         <Card className="overflow-x-auto p-0">
-          <div className="border-b border-border px-4 py-3">
-            <SectionHeader title="Teachers × signals" />
-            <MetaText>{teacherPivotRows.length} teacher{teacherPivotRows.length !== 1 ? "s" : ""} in scope · Window: {windowDays} days</MetaText>
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <div>
+              <SectionHeader title="Teachers" />
+              <MetaText>{teacherPivotRows.length} teacher{teacherPivotRows.length !== 1 ? "s" : ""} in scope · Window: {windowDays} days</MetaText>
+            </div>
+            {canExport ? (
+              <form action="/api/explorer/export" method="POST">
+                <input type="hidden" name="view" value={view} />
+                <input type="hidden" name="windowDays" value={String(windowDays)} />
+                <input type="hidden" name="departmentId" value={filterDepartmentId} />
+                <input type="hidden" name="yearGroup" value={filterYearGroup} />
+                <input type="hidden" name="teacherMembershipId" value={filterTeacherId} />
+                <input type="hidden" name="subject" value={filterSubject} />
+                <input type="hidden" name="studentSearch" value={studentSearch} />
+                <button type="submit" className="inline-flex items-center justify-center rounded-lg p-2 text-muted hover:bg-bg hover:text-text calm-transition" title="Export CSV">
+                  <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 3v10m0 0-3.5-3.5M10 13l3.5-3.5M4 16h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </form>
+            ) : null}
           </div>
           {teacherPivotRows.length === 0 ? (
             <div className="p-6">
@@ -595,7 +570,7 @@ export default async function ExplorerPage({
                 <table className="min-w-full text-sm">
                   <thead className="sticky top-0 z-10">
                     <tr className="border-b border-border bg-bg text-left text-xs font-medium text-muted">
-                      <th className="sticky-first-column sticky-first-column-header px-4 py-3">Teacher</th>
+                      <th className="sticky-first-column sticky-first-column-header whitespace-nowrap px-4 py-3">Teacher</th>
                       <th className="px-4 py-3">Department</th>
                       <th className="px-4 py-3 text-right">Coverage</th>
                       <th className="px-4 py-3">Band</th>
@@ -610,7 +585,7 @@ export default async function ExplorerPage({
                               title={signalLabels.get(k)}
                               className={`inline-flex items-center justify-end gap-0.5 hover:text-text transition-colors ${isSorted ? "text-text" : ""}`}
                             >
-                              {signalLabels.get(k)?.slice(0, 6) ?? k}
+                              {signalLabels.get(k) ?? k}
                               <span className="text-[10px]">{isSorted ? (sortDir === "desc" ? "↓" : "↑") : "⇅"}</span>
                             </Link>
                           </th>
@@ -620,21 +595,21 @@ export default async function ExplorerPage({
                   </thead>
                   <tbody>
                     {teacherPivotRows.map((row) => (
-                      <tr key={row.teacherMembershipId} className="border-b border-divider last:border-0 hover:bg-bg">
-                        <td className="sticky-first-column px-4 py-3 font-medium text-text">
+                      <tr key={row.teacherMembershipId} className="border-b border-divider last:border-0 group">
+                        <td className="sticky-first-column whitespace-nowrap px-4 py-3 font-medium text-text group-hover:bg-bg calm-transition">
                           <Link href={`/analysis/teachers/${row.teacherMembershipId}?window=${windowDays}`} className="inline-flex items-center gap-2 hover:underline">
                             <Avatar name={row.teacherName} size="sm" />
                             {row.teacherName}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-muted text-xs">{row.departmentNames.join(", ") || "—"}</td>
-                        <td className="px-4 py-3 text-right tabular-nums text-muted">{row.teacherCoverage}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 text-muted text-xs group-hover:bg-bg calm-transition">{row.departmentNames.join(", ") || "—"}</td>
+                        <td className="px-4 py-3 text-right tabular-nums text-muted group-hover:bg-bg calm-transition">{row.teacherCoverage}</td>
+                        <td className="px-4 py-3 group-hover:bg-bg calm-transition">
                           <StatusPill variant={STATUS_VARIANT[row.status]} size="sm">
                             {STATUS_LABELS[row.status]}
                           </StatusPill>
                         </td>
-                        <td className="px-4 py-3 text-right tabular-nums text-muted">{row.normalizedIDS.toFixed(1)}</td>
+                        <td className="px-4 py-3 text-right tabular-nums text-muted group-hover:bg-bg calm-transition">{row.normalizedIDS.toFixed(1)}</td>
                         {signalKeys.map((k) => {
                           const cell = row.signalData[k] ?? { currentMean: null, prevMean: null, delta: null, coverageCount: 0 };
                           const label = signalLabels.get(k) ?? k;
@@ -671,9 +646,27 @@ export default async function ExplorerPage({
       {/* INSTRUCTION_DEPARTMENTS_PIVOT */}
       {view === "INSTRUCTION_DEPARTMENTS_PIVOT" && (
         <Card className="overflow-x-auto p-0">
-          <div className="border-b border-border px-4 py-3">
-            <SectionHeader title="Departments × signals" />
-            <MetaText>{deptPivotRows.length} department{deptPivotRows.length !== 1 ? "s" : ""} in scope · Window: {windowDays} days</MetaText>
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <div>
+              <SectionHeader title="Departments" />
+              <MetaText>{deptPivotRows.length} department{deptPivotRows.length !== 1 ? "s" : ""} in scope · Window: {windowDays} days</MetaText>
+            </div>
+            {canExport ? (
+              <form action="/api/explorer/export" method="POST">
+                <input type="hidden" name="view" value={view} />
+                <input type="hidden" name="windowDays" value={String(windowDays)} />
+                <input type="hidden" name="departmentId" value={filterDepartmentId} />
+                <input type="hidden" name="yearGroup" value={filterYearGroup} />
+                <input type="hidden" name="teacherMembershipId" value={filterTeacherId} />
+                <input type="hidden" name="subject" value={filterSubject} />
+                <input type="hidden" name="studentSearch" value={studentSearch} />
+                <button type="submit" className="inline-flex items-center justify-center rounded-lg p-2 text-muted hover:bg-bg hover:text-text calm-transition" title="Export CSV">
+                  <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 3v10m0 0-3.5-3.5M10 13l3.5-3.5M4 16h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </form>
+            ) : null}
           </div>
           {deptPivotRows.length === 0 ? (
             <div className="p-6">
@@ -737,7 +730,7 @@ export default async function ExplorerPage({
                               title={signalLabels.get(k)}
                               className={`inline-flex items-center justify-end gap-0.5 hover:text-text transition-colors ${isSorted ? "text-text" : ""}`}
                             >
-                              {signalLabels.get(k)?.slice(0, 6) ?? k}
+                              {signalLabels.get(k) ?? k}
                               <span className="text-[10px]">{isSorted ? (sortDir === "desc" ? "↓" : "↑") : "⇅"}</span>
                             </Link>
                           </th>

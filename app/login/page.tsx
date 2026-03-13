@@ -38,7 +38,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-full">
+    <div className="flex min-h-screen">
       <div className="hidden lg:flex lg:w-[45%] lg:flex-col lg:justify-between bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-500 p-12 text-white">
         <div className="flex items-center gap-3">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
@@ -84,12 +84,7 @@ export default function LoginPage() {
               <input id="password" name="password" type="password" placeholder="Enter your password" className="field" required autoComplete="current-password" />
             </div>
 
-            <div>
-              <label htmlFor="tenantId" className="mb-1.5 block text-[13px] font-medium text-text">
-                Tenant ID <span className="text-muted/50">(optional)</span>
-              </label>
-              <input id="tenantId" name="tenantId" type="text" placeholder="Only needed for multi-tenant accounts" className="field" defaultValue={switchTo} />
-            </div>
+            <input type="hidden" name="tenantId" value={switchTo} />
 
             <div className="flex items-center justify-end">
               <a className="calm-transition text-[13px] text-muted hover:text-accent" href="#">Forgot password?</a>

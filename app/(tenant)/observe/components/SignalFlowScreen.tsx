@@ -179,12 +179,12 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
           <Card className="space-y-2">
             <div className="flex items-start justify-between gap-2">
               <H2>{title}</H2>
-              <Button type="button" variant="secondary" className="px-2 py-1 text-xs lg:hidden" onClick={() => {
+              <Button type="button" variant="secondary" className="px-2 py-1 text-xs md:hidden" onClick={() => {
                 const el = document.getElementById("signal-info-panel");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}>Info</Button>
             </div>
-            <BodyText className="line-clamp-2 text-muted lg:hidden">{description}</BodyText>
+            <BodyText className="line-clamp-2 text-muted md:hidden">{description}</BodyText>
           </Card>
 
           <SignalTileGroup
@@ -214,12 +214,12 @@ export function SignalFlowScreen({ draftKey, signals, labelMap }: { draftKey: st
           </Button>
           <BodyText className="text-xs text-muted">Select a rating or skip, then press Next to continue.</BodyText>
 
-          <div id="signal-info-panel" className="lg:hidden">
+          <div id="signal-info-panel" className="md:hidden">
             {infoPanel}
           </div>
         </div>
 
-        <aside className="hidden lg:block w-80 shrink-0 sticky top-4 self-start">
+        <aside className="hidden md:block w-80 shrink-0 sticky top-4 self-start">
           <Card className="space-y-3 max-h-[calc(100vh-6rem)] overflow-y-auto">
             {infoPanel}
           </Card>

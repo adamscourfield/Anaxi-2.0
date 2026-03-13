@@ -220,8 +220,8 @@ export function TenantNav({
                         title={collapsed ? item.label : undefined}
                         className={`group flex items-center ${collapsed ? "justify-center" : "justify-between"} rounded-lg px-2 py-[7px] calm-transition ${
                           active
-                            ? "bg-accent text-white font-medium shadow-sm"
-                            : "text-muted hover:bg-bg hover:text-text"
+                            ? "bg-[#eef2ff] text-accent font-semibold"
+                            : "text-[var(--text-muted)] hover:bg-white/70 hover:text-[var(--text)]"
                         }`}
                       >
                         <span className={`flex items-center ${collapsed ? "justify-center" : "gap-2.5"} min-w-0`}>
@@ -231,7 +231,7 @@ export function TenantNav({
                         {!collapsed && showBadge && (
                           <span className={`ml-2 flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-semibold ${
                             active
-                              ? "bg-white/20 text-white"
+                              ? "bg-accent/10 text-accent"
                               : (item.badgeCount ?? 0) >= 5
                                 ? "bg-amber-100 text-amber-700"
                                 : "bg-gray-100 text-gray-600"

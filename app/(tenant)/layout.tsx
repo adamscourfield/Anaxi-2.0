@@ -5,6 +5,16 @@ import { getOpenOnCallCount } from "@/lib/oncall/badge";
 import { canManageLoa } from "@/lib/loa";
 import { hasPermission } from "@/lib/rbac";
 
+function userInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
+}
+
 export default async function TenantLayout({ children }: { children: React.ReactNode }) {
   const user = await getSessionUserOrThrow();
   const features = await prisma.tenantFeature.findMany({ where: { tenantId: user.tenantId, enabled: true } });
@@ -19,6 +29,8 @@ export default async function TenantLayout({ children }: { children: React.React
       : Promise.resolve(0),
   ]);
 
+  const initials = userInitials(user.fullName || user.email || "?");
+
   return (
     <>
       <TenantNav
@@ -27,11 +39,24 @@ export default async function TenantLayout({ children }: { children: React.React
         onCallCount={onCallCount}
         leaveCount={leaveCount}
       />
-      <main className="ml-[var(--sidebar-width)] min-h-screen px-8 py-8 lg:px-10 calm-transition" id="tenant-content">
-        <div className="mx-auto max-w-[1400px]">
-          {children}
-        </div>
-      </main>
+      <div className="ml-[var(--sidebar-width)] flex min-h-screen flex-col calm-transition" id="tenant-content">
+        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-end border-b border-border/60 bg-[var(--bg)] px-8 lg:px-10">
+          <div className="flex items-center gap-3">
+            <span className="hidden text-[13px] text-muted sm:block">{user.fullName || user.email}</span>
+            <span
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-[12px] font-semibold text-white"
+              title={user.fullName || user.email}
+            >
+              {initials}
+            </span>
+          </div>
+        </header>
+        <main className="flex-1 px-8 py-8 lg:px-10">
+          <div className="mx-auto max-w-[1400px]">
+            {children}
+          </div>
+        </main>
+      </div>
     </>
   );
 }

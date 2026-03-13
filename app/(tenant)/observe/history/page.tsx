@@ -2,10 +2,24 @@ import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusPill, type PillVariant } from "@/components/ui/status-pill";
+
+const PHASE_LABEL: Record<string, string> = {
+  INSTRUCTION: "Instruction",
+  GUIDED_PRACTICE: "Guided practice",
+  INDEPENDENT_PRACTICE: "Independent",
+  UNKNOWN: "Not recorded",
+};
+
+const PHASE_VARIANT: Record<string, PillVariant> = {
+  INSTRUCTION: "info",
+  GUIDED_PRACTICE: "success",
+  INDEPENDENT_PRACTICE: "accent",
+  UNKNOWN: "neutral",
+};
 
 export default async function ObservationHistoryPage({ searchParams }: { searchParams?: Record<string, string | string[] | undefined> }) {
   const user = await getSessionUserOrThrow();
@@ -88,48 +102,115 @@ export default async function ObservationHistoryPage({ searchParams }: { searchP
   });
 
   return (
-    <div className="space-y-5">
-      <PageHeader title="Observation history" subtitle="Filter by teacher, observer, subject, year group, and date range." />
+    <div className="space-y-6">
+      <PageHeader
+        title="Observation history"
+        subtitle="Recent classroom observations filtered by teacher, observer, subject, year group, or date."
+        actions={
+          user.role !== "TEACHER" ? (
+            <Link href="/observe/new">
+              <Button>New observation</Button>
+            </Link>
+          ) : undefined
+        }
+      />
 
-      <Card>
-        <form className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-6">
+      {/* Filters */}
+      <div className="table-shell">
+        <div className="table-header-strip">
+          <p className="text-[12px] font-semibold uppercase tracking-wide text-muted">Filters</p>
+        </div>
+        <form className="flex flex-wrap items-end gap-3 p-4">
           {user.role !== "TEACHER" ? (
             <>
-              <select name="teacherId" defaultValue={teacherId} className="rounded-md border border-border bg-bg/60 p-2 text-sm text-text">
+              <select name="teacherId" defaultValue={teacherId} className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text">
                 <option value="">All teachers</option>
                 {visibleTeachers.map((teacher: any) => <option key={teacher.id} value={teacher.id}>{teacher.fullName}</option>)}
               </select>
-              <select name="observerId" defaultValue={observerId} className="rounded-md border border-border bg-bg/60 p-2 text-sm text-text">
+              <select name="observerId" defaultValue={observerId} className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text">
                 <option value="">All observers</option>
                 {(observers as any[]).map((observer) => <option key={observer.id} value={observer.id}>{observer.fullName}</option>)}
               </select>
             </>
           ) : null}
-          <input name="subject" defaultValue={subject} placeholder="Subject" className="rounded-md border border-border bg-bg/60 p-2 text-sm text-text placeholder:text-muted" />
-          <input name="yearGroup" defaultValue={yearGroup} placeholder="Year group" className="rounded-md border border-border bg-bg/60 p-2 text-sm text-text placeholder:text-muted" />
-          <input name="from" type="date" defaultValue={from} className="rounded-md border border-border bg-bg/60 p-2 text-sm text-text" />
-          <input name="to" type="date" defaultValue={to} className="rounded-md border border-border bg-bg/60 p-2 text-sm text-text" />
-          <Button className="lg:col-span-1" type="submit">Apply filters</Button>
+          <input name="subject" defaultValue={subject} placeholder="Subject" className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text placeholder:text-muted" />
+          <input name="yearGroup" defaultValue={yearGroup} placeholder="Year group" className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text placeholder:text-muted" />
+          <input name="from" type="date" defaultValue={from} className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text" />
+          <input name="to" type="date" defaultValue={to} className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text" />
+          <Button type="submit" variant="secondary" className="px-4 py-2 text-sm">Apply</Button>
+          <Link href="/observe/history" className="calm-transition rounded-lg border border-border bg-white px-4 py-2 text-sm text-muted hover:text-text">
+            Reset
+          </Link>
         </form>
-      </Card>
+      </div>
 
-      <Card className="p-0">
+      {/* Observations table */}
+      <div className="table-shell">
+        <div className="table-header-strip">
+          <p className="text-[12px] font-semibold uppercase tracking-wide text-muted">
+            {(observations as any[]).length} observation{(observations as any[]).length !== 1 ? "s" : ""}
+          </p>
+        </div>
+
         {(observations as any[]).length === 0 ? (
-          <div className="p-4">
+          <div className="p-8">
             <EmptyState title="No observations found" description="Try widening your filters or selecting a different date range." />
           </div>
         ) : (
-          <ul className="divide-y divide-border/70 p-3 text-sm">
-            {(observations as any[]).map((observation) => (
-              <li key={observation.id} className="px-1 py-2">
-                <Link className="font-medium text-accent hover:text-accentHover" href={`/observe/${observation.id}`}>
-                  {new Date(observation.observedAt).toLocaleDateString()} · {observation.subject} · {observation.yearGroup} · {observation.observedTeacher?.fullName} · by {observation.observer?.fullName}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="table-head-row">
+                  <th className="px-4 py-3 text-left font-semibold">Date</th>
+                  <th className="px-4 py-3 text-left font-semibold">Teacher</th>
+                  {user.role !== "TEACHER" && <th className="px-4 py-3 text-left font-semibold">Observer</th>}
+                  <th className="px-4 py-3 text-left font-semibold">Subject</th>
+                  <th className="px-4 py-3 text-left font-semibold">Year</th>
+                  <th className="px-4 py-3 text-left font-semibold">Phase</th>
+                  <th className="px-4 py-3 text-left font-semibold">Signals</th>
+                  <th className="px-4 py-3" />
+                </tr>
+              </thead>
+              <tbody>
+                {(observations as any[]).map((obs) => {
+                  const phase = obs.phase as string;
+                  const signalCount = (obs.signals as any[]).filter((s: any) => s.valueKey).length;
+                  const totalSignals = (obs.signals as any[]).length;
+                  return (
+                    <tr key={obs.id} className="table-row">
+                      <td className="px-4 py-3 text-text">
+                        {new Date(obs.observedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      </td>
+                      <td className="px-4 py-3 font-medium text-text">{obs.observedTeacher?.fullName ?? "—"}</td>
+                      {user.role !== "TEACHER" && (
+                        <td className="px-4 py-3 text-muted">{obs.observer?.fullName ?? "—"}</td>
+                      )}
+                      <td className="px-4 py-3 text-text">{obs.subject}</td>
+                      <td className="px-4 py-3 text-muted">Yr {obs.yearGroup}</td>
+                      <td className="px-4 py-3">
+                        <StatusPill variant={PHASE_VARIANT[phase] ?? "neutral"} size="sm">
+                          {PHASE_LABEL[phase] ?? phase}
+                        </StatusPill>
+                      </td>
+                      <td className="px-4 py-3 tabular-nums text-muted">
+                        {signalCount}/{totalSignals}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Link
+                          href={`/observe/${obs.id}`}
+                          className="calm-transition inline-flex items-center rounded-lg border border-border bg-white px-3 py-1 text-xs font-medium text-text shadow-sm hover:border-accent/30 hover:text-accent"
+                        >
+                          View →
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

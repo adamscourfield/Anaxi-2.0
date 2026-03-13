@@ -421,41 +421,36 @@ export default async function ExplorerPage({
       </Card>
 
       {/* View selector */}
-      <div className="space-y-2">
-        <MetaText>Instructional</MetaText>
-        <div className="flex flex-wrap gap-2">
-          {(["INSTRUCTION_TEACHERS_PIVOT", "INSTRUCTION_DEPARTMENTS_PIVOT", "INSTRUCTION_LIST"] as ViewMode[]).map((v) => (
-            <Link
-              key={v}
-              href={buildFilterQuery({ view: v })}
-              className={`calm-transition rounded-lg border px-4 py-2 text-sm font-medium transition duration-200 ease-calm ${
-                v === view
-                  ? "border-accent bg-[var(--accent-tint)] text-text"
-                  : "border-border bg-surface text-text hover:border-accentHover"
-              }`}
-            >
-              {VIEW_LABELS[v]}
-            </Link>
-          ))}
-        </div>
+      <div className="flex items-center gap-1 rounded-xl border border-border bg-white p-1 shadow-sm w-fit flex-wrap">
+        {(["INSTRUCTION_TEACHERS_PIVOT", "INSTRUCTION_DEPARTMENTS_PIVOT", "INSTRUCTION_LIST"] as ViewMode[]).map((v) => (
+          <Link
+            key={v}
+            href={buildFilterQuery({ view: v })}
+            className={`calm-transition rounded-lg px-4 py-1.5 text-[13px] font-medium transition duration-200 ease-calm ${
+              v === view
+                ? "bg-accent text-white shadow-sm"
+                : "text-muted hover:text-text"
+            }`}
+          >
+            {VIEW_LABELS[v]}
+          </Link>
+        ))}
         {canSeeBehaviour && (
           <>
-            <MetaText className="mt-2">Behaviour</MetaText>
-            <div className="flex flex-wrap gap-2">
-              {(["BEHAVIOUR_STUDENTS_TABLE", "BEHAVIOUR_COHORTS_PIVOT"] as ViewMode[]).map((v) => (
-                <Link
-                  key={v}
-                  href={buildFilterQuery({ view: v })}
-                  className={`calm-transition rounded-lg border px-4 py-2 text-sm font-medium transition duration-200 ease-calm ${
-                    v === view
-                      ? "border-accent bg-[var(--accent-tint)] text-text"
-                      : "border-border bg-surface text-text hover:border-accentHover"
-                  }`}
-                >
-                  {VIEW_LABELS[v]}
-                </Link>
-              ))}
-            </div>
+            <span className="mx-1 h-5 w-px bg-border" />
+            {(["BEHAVIOUR_STUDENTS_TABLE", "BEHAVIOUR_COHORTS_PIVOT"] as ViewMode[]).map((v) => (
+              <Link
+                key={v}
+                href={buildFilterQuery({ view: v })}
+                className={`calm-transition rounded-lg px-4 py-1.5 text-[13px] font-medium transition duration-200 ease-calm ${
+                  v === view
+                    ? "bg-accent text-white shadow-sm"
+                    : "text-muted hover:text-text"
+                }`}
+              >
+                {VIEW_LABELS[v]}
+              </Link>
+            ))}
           </>
         )}
       </div>

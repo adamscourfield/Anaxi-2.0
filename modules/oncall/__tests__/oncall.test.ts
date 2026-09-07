@@ -5,6 +5,7 @@ import {
   acknowledgeOnCallRequest,
   resolveOnCallRequest,
   cancelOnCallRequest,
+  deleteOnCallRequest,
 } from "@/modules/oncall/service";
 
 // Mock prisma
@@ -17,6 +18,7 @@ vi.mock("@/lib/prisma", () => ({
       findFirst: vi.fn(),
       update: vi.fn(),
       updateMany: vi.fn(),
+      deleteMany: vi.fn(),
       count: vi.fn(),
       findMany: vi.fn(),
     },
@@ -76,12 +78,17 @@ describe("RBAC – hasOnCallPermission", () => {
     expect(hasOnCallPermission("HR", "oncall:acknowledge")).toBe(false);
   });
 
-  it("SLT can create, acknowledge, resolve, and view all", () => {
+  it("SLT can create, acknowledge, resolve, view all, and delete", () => {
     expect(hasOnCallPermission("SLT", "oncall:create")).toBe(true);
     expect(hasOnCallPermission("SLT", "oncall:acknowledge")).toBe(true);
     expect(hasOnCallPermission("SLT", "oncall:resolve")).toBe(true);
     expect(hasOnCallPermission("SLT", "oncall:view_all")).toBe(true);
     expect(hasOnCallPermission("SLT", "oncall:cancel")).toBe(false);
+    expect(hasOnCallPermission("SLT", "oncall:delete")).toBe(true);
+  });
+
+  it("TEACHER cannot delete", () => {
+    expect(hasOnCallPermission("TEACHER", "oncall:delete")).toBe(false);
   });
 });
 
@@ -371,5 +378,24 @@ describe("cancelOnCallRequest", () => {
     await expect(
       cancelOnCallRequest("req_1", "tenant_1", "user_1")
     ).rejects.toThrow("request not found");
+  });
+});
+
+describe("deleteOnCallRequest", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("deletes a request scoped to the tenant", async () => {
+    (prisma as any).onCallRequest.deleteMany.mockResolvedValue({ count: 1 });
+    await deleteOnCallRequest("req_1", "tenant_1");
+    expect((prisma as any).onCallRequest.deleteMany).toHaveBeenCalledWith({
+      where: { id: "req_1", tenantId: "tenant_1" },
+    });
+  });
+
+  it("throws when request not found (or belongs to a different tenant)", async () => {
+    (prisma as any).onCallRequest.deleteMany.mockResolvedValue({ count: 0 });
+    await expect(deleteOnCallRequest("req_1", "tenant_1")).rejects.toThrow("request not found");
   });
 });

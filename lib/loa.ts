@@ -165,11 +165,15 @@ export async function loaApproverEmailsForRequest(
     }
   }
 
+  // ADMIN/SUPER_ADMIN always have global leave access, so they're always
+  // notified. SLT does not automatically -- an SLT member is only notified
+  // if they've individually been granted approval access (canApproveAllLoa,
+  // an LOAAuthoriser row, a scope, or a group), same as HOD/HR/Leader.
   const roleApprovers = await prisma.user.findMany({
     where: {
       tenantId,
       isActive: true,
-      role: { in: ["ADMIN", "SUPER_ADMIN", "SLT"] },
+      role: { in: ["ADMIN", "SUPER_ADMIN"] },
     },
     select: { id: true, email: true },
   });

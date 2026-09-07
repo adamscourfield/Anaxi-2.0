@@ -8,7 +8,8 @@ export type OnCallPermission =
   | "oncall:acknowledge"
   | "oncall:resolve"
   | "oncall:view_all"
-  | "oncall:cancel";
+  | "oncall:cancel"
+  | "oncall:delete";
 
 export type StudentPermission =
   | "students:read"
@@ -68,7 +69,7 @@ const TEACHER_PERMISSIONS: AppPermission[] = [
 
 const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
   SUPER_ADMIN: [
-    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel",
+    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel", "oncall:delete",
     "import:write", "students:read", "students:write",
     "meetings:create", "meetings:view_own", "meetings:view_all", "meetings:edit", "meetings:delete",
     "actions:create", "actions:manage", "actions:view_own",
@@ -78,7 +79,7 @@ const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
     "admin:access", "admin:users", "admin:settings",
   ],
   ADMIN: [
-    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel",
+    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel", "oncall:delete",
     "import:write", "students:read", "students:write",
     "meetings:create", "meetings:view_own", "meetings:view_all", "meetings:edit", "meetings:delete",
     "actions:create", "actions:manage", "actions:view_own",
@@ -87,13 +88,17 @@ const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
     "analysis:view", "analysis:view_behaviour", "analysis:export",
     "admin:access", "admin:users", "admin:settings",
   ],
+  // SLT no longer gets blanket "leave:approve_all" -- global leave visibility
+  // and approval is now opt-in per person (canApproveAllLoa / scoped groups),
+  // same mechanism already used for HOD/HR/Leader. Existing SLT staff were
+  // grandfathered in via a data migration so nobody lost access on upgrade.
   SLT: [
-    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all",
+    "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:delete",
     "import:write", "students:read", "students:write",
     "meetings:create", "meetings:view_all", "meetings:edit",
     "actions:create", "actions:manage", "actions:view_own",
     "observe:view", "observe:view_all", "observe:create",
-    "leave:request", "leave:approve", "leave:approve_all",
+    "leave:request", "leave:approve",
     "analysis:view", "analysis:view_behaviour", "analysis:export",
   ],
   HOD: [

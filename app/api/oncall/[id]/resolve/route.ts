@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeature } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { resolveOnCallRequest } from "@/modules/oncall/service";
 import { sendOnCallNotification } from "@/modules/oncall/notifications";
@@ -10,7 +9,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   try {
     const resolvedParams = await params;
     const user = await getSessionUserOrThrow();
-    await requireFeature(user.tenantId, "ON_CALL");
     if (!hasOnCallPermission(user.role, "oncall:resolve")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

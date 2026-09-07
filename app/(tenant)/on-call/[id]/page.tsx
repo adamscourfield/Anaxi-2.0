@@ -1,5 +1,4 @@
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeatureForPage } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { getRequestDetail } from "@/modules/oncall/service";
 import { OnCallDetail } from "@/components/oncall/OnCallDetail";
@@ -7,7 +6,6 @@ import { notFound } from "next/navigation";
 
 export default async function OnCallDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUserOrThrow();
-  await requireFeatureForPage(user.tenantId, "ON_CALL");
   const resolvedParams = await params;
 
   let request: Awaited<ReturnType<typeof getRequestDetail>>;

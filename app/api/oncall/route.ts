@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeature } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { createOnCallRequest, getRequestsByStatus } from "@/modules/oncall/service";
 import { sendOnCallNotification } from "@/modules/oncall/notifications";
@@ -10,7 +9,6 @@ import { onCallCreateBodySchema, parseBody } from "@/lib/validation/schemas";
 export async function POST(req: Request) {
   try {
     const user = await getSessionUserOrThrow();
-    await requireFeature(user.tenantId, "ON_CALL");
     if (!hasOnCallPermission(user.role, "oncall:create")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -42,7 +40,6 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const user = await getSessionUserOrThrow();
-    await requireFeature(user.tenantId, "ON_CALL");
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status") ?? undefined;

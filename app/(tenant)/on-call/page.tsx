@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeature } from "@/lib/guards";
+import { requireFeatureForPage } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { getRequestsByStatus } from "@/modules/oncall/service";
 import { OnCallInbox } from "@/components/oncall/OnCallInbox";
@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export default async function OnCallHomePage() {
   const user = await getSessionUserOrThrow();
-  await requireFeature(user.tenantId, "ON_CALL");
+  await requireFeatureForPage(user.tenantId, "ON_CALL");
 
   const canAcknowledge = hasOnCallPermission(user.role, "oncall:acknowledge");
   const canResolve = hasOnCallPermission(user.role, "oncall:resolve");

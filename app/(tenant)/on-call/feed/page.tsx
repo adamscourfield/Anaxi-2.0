@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeature } from "@/lib/guards";
+import { requireFeatureForPage } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
 import { getTenantVocab } from "@/lib/vocab";
 import { REQUEST_TYPE_LABELS } from "@/modules/oncall/types";
@@ -23,7 +23,7 @@ export default async function OnCallFeedPage({
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
   const user = await getSessionUserOrThrow();
-  await requireFeature(user.tenantId, "ON_CALL");
+  await requireFeatureForPage(user.tenantId, "ON_CALL");
   const vocab = await getTenantVocab(user.tenantId);
   const resolvedSearchParams = (await searchParams) ?? {};
 

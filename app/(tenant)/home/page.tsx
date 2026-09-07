@@ -1422,9 +1422,10 @@ export default async function HomePage({
   if (enabledFeatures.has("MEETINGS")) {
     quickActionItems.push({ label: "New meeting", href: "/meetings/new", icon: <IconCalendar className="text-[var(--info)]" /> });
   }
-  if (enabledFeatures.has("ON_CALL")) {
-    quickActionItems.push({ label: "On call", href: "/on-call/new", icon: <IconPhone className="text-muted" /> });
-  }
+  // On Call logging is never gated behind the tenant feature flag -- see
+  // app/(tenant)/on-call/page.tsx. Only the reporting widgets below stay
+  // conditional on it.
+  quickActionItems.push({ label: "On call", href: "/on-call/new", icon: <IconPhone className="text-muted" /> });
   if (enabledFeatures.has("LEAVE")) {
     quickActionItems.push({ label: "Leave of absence", href: "/leave/request", icon: <IconUmbrella className="text-[var(--info)]" /> });
   }

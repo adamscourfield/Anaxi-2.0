@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeature } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { getRequestsByStatus } from "@/modules/oncall/service";
 import { OnCallInbox } from "@/components/oncall/OnCallInbox";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 
+// On Call is a safety-critical feature: unlike other modules, it is never
+// gated behind a tenant feature flag -- every school can always log and
+// track on-call requests. Whether staff receive emails about them is a
+// separate, per-user preference (see modules/oncall/notifications.ts).
 export default async function OnCallHomePage() {
   const user = await getSessionUserOrThrow();
-  await requireFeature(user.tenantId, "ON_CALL");
 
   const canAcknowledge = hasOnCallPermission(user.role, "oncall:acknowledge");
   const canResolve = hasOnCallPermission(user.role, "oncall:resolve");

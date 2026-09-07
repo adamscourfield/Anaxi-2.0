@@ -1,14 +1,13 @@
 import { redirect } from "next/navigation";
 import { getSessionUserOrThrow } from "@/lib/auth";
-import { requireFeature } from "@/lib/guards";
 import { hasOnCallPermission } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { OnCallRequestForm } from "@/components/oncall/OnCallRequestForm";
 import { REASON_CATEGORIES, LOCATION_SUGGESTIONS } from "@/modules/oncall/types";
 
+// On Call is never gated behind a tenant feature flag -- see on-call/page.tsx.
 export default async function OnCallNewPage() {
   const user = await getSessionUserOrThrow();
-  await requireFeature(user.tenantId, "ON_CALL");
 
   if (!hasOnCallPermission(user.role, "oncall:create")) {
     redirect("/on-call");

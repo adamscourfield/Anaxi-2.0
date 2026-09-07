@@ -10,6 +10,7 @@ import { OnCallStatusBadge } from "./OnCallStatusBadge";
 import { REQUEST_TYPE_LABELS } from "@/modules/oncall/types";
 import { StatusPill } from "@/components/ui/status-pill";
 import { toast } from "@/components/toast-provider";
+import { DestructiveConfirmDialog } from "@/components/ui/destructive-confirm";
 
 /** Design tokens — on-call detail (indigo accent, slate text, soft cards) */
 const INDIGO = "#4F46E5";
@@ -49,6 +50,7 @@ interface OnCallDetailProps {
   canAcknowledge?: boolean;
   canResolve?: boolean;
   canCancel?: boolean;
+  canDelete?: boolean;
 }
 
 function fmt(d?: Date | string | null) {
@@ -110,9 +112,10 @@ function DetailLine({
   );
 }
 
-export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }: OnCallDetailProps) {
+export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel, canDelete }: OnCallDetailProps) {
   const router = useRouter();
   const [actionPending, setActionPending] = useState<string | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const timelineEntries = useMemo(() => {
     const fromDb = request.timelineEvents;
@@ -173,6 +176,32 @@ export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }:
     }
   }
 
+  async function handleDelete() {
+    setDeleteOpen(false);
+    setActionPending("delete");
+    try {
+      const res = await fetch(`/api/oncall/${request.id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast("Request deleted", "success");
+        router.push("/on-call");
+        router.refresh();
+      } else {
+        let message = "Something went wrong.";
+        try {
+          const data = await res.json();
+          if (data?.error && typeof data.error === "string") message = data.error;
+        } catch {
+          /* ignore */
+        }
+        toast(message, "error");
+      }
+    } catch {
+      toast("Network error", "error");
+    } finally {
+      setActionPending(null);
+    }
+  }
+
   const surfaceCard =
     "rounded-sm border border-border bg-[var(--surface-container-lowest)] shadow-none";
 
@@ -182,7 +211,8 @@ export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }:
   const hasActions =
     (canAcknowledge && request.status === "OPEN") ||
     (canResolve && (request.status === "OPEN" || request.status === "ACKNOWLEDGED")) ||
-    (canCancel && request.status === "OPEN");
+    (canCancel && request.status === "OPEN") ||
+    canDelete;
 
   return (
     <div className="w-full min-w-0 space-y-6 pb-24 pt-1 md:pb-8">
@@ -384,6 +414,17 @@ export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }:
                     {actionPending === "cancel" ? "Working…" : "Cancel request"}
                   </Button>
                 ) : null}
+                {canDelete ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="rounded-xl px-4 py-2.5 text-[0.8125rem] text-error hover:bg-error/10"
+                    disabled={!!actionPending}
+                    onClick={() => setDeleteOpen(true)}
+                  >
+                    {actionPending === "delete" ? "Working…" : "Delete request"}
+                  </Button>
+                ) : null}
               </div>
               {canAcknowledge && request.status === "OPEN" ? (
                 <p className="mt-3 block max-w-md text-[0.8125rem] leading-relaxed" style={{ color: SLATE_600 }}>
@@ -466,9 +507,31 @@ export function OnCallDetail({ request, canAcknowledge, canResolve, canCancel }:
                 Cancel
               </Button>
             ) : null}
+            {canDelete ? (
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-error"
+                disabled={!!actionPending}
+                onClick={() => setDeleteOpen(true)}
+              >
+                Delete
+              </Button>
+            ) : null}
           </div>
         </div>
       ) : null}
+
+      <DestructiveConfirmDialog
+        open={deleteOpen}
+        title="Delete on-call request?"
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={handleDelete}
+      >
+        This will permanently remove this on-call request and its timeline. This cannot be undone.
+      </DestructiveConfirmDialog>
     </div>
   );
 }

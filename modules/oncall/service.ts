@@ -192,6 +192,15 @@ export async function cancelOnCallRequest(
   return next;
 }
 
+export async function deleteOnCallRequest(requestId: string, tenantId: string) {
+  const result = await (prisma as any).onCallRequest.deleteMany({
+    where: { id: requestId, tenantId },
+  });
+  if (result.count !== 1) throw new Error("request not found");
+
+  logger.info("oncall.deleted", { tenantId, requestId });
+}
+
 export async function getOpenRequests(tenantId: string) {
   return (prisma as any).onCallRequest.findMany({
     where: { tenantId, status: "OPEN" },

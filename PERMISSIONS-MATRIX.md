@@ -19,6 +19,7 @@ It is intended to reduce direct role checks in UI and route handlers.
 - `oncall:resolve`
 - `oncall:view_all`
 - `oncall:cancel`
+- `oncall:delete`
 
 ### Students / Imports
 - `students:read`

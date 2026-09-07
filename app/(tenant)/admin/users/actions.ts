@@ -194,6 +194,33 @@ export async function setUserAvatar(formData: FormData): Promise<ActionResult> {
   });
 }
 
+export async function resendOnboardingInvite(formData: FormData): Promise<ActionResult> {
+  return runAction(async () => {
+    await assertSafeServerAction(formData);
+    const admin = await requireAdminUser();
+    const id = String(formData.get("id"));
+    if (!id) throw new Error("User is required.");
+    await assertAdminCanMutateUser(admin, id, admin.tenantId);
+
+    const user = await prisma.user.findFirst({
+      where: { id, tenantId: admin.tenantId },
+      select: { email: true, fullName: true, isActive: true },
+    });
+    if (!user) throw new Error("Staff member not found.");
+    if (!user.isActive) throw new Error("Reactivate this staff member before resending their invite.");
+
+    const result = await sendOnboardingEmail({
+      to: user.email,
+      fullName: user.fullName,
+      tenantId: admin.tenantId,
+      userId: id,
+    });
+    if (result.status === "failed") {
+      throw new Error("Could not send the invite email. Check the email log for details.");
+    }
+  });
+}
+
 export async function toggleActive(formData: FormData): Promise<ActionResult> {
   return runAction(async () => {
     await assertSafeServerAction(formData);

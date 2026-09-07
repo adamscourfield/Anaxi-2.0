@@ -20,6 +20,7 @@ export function UserDirectoryPageShell({
   updateRoleAction,
   toggleActiveAction,
   resetPasswordAction,
+  resendOnboardingAction,
   deleteUserAction,
   avatarAction,
 }: {
@@ -34,6 +35,7 @@ export function UserDirectoryPageShell({
   updateRoleAction: (formData: FormData) => Promise<ActionResult>;
   toggleActiveAction: (formData: FormData) => Promise<ActionResult>;
   resetPasswordAction: (formData: FormData) => Promise<ActionResult>;
+  resendOnboardingAction: (formData: FormData) => Promise<ActionResult>;
   deleteUserAction: (formData: FormData) => Promise<ActionResult>;
   avatarAction: (formData: FormData) => Promise<ActionResult>;
 }) {
@@ -63,6 +65,7 @@ export function UserDirectoryPageShell({
         updateRoleAction={updateRoleAction}
         toggleActiveAction={toggleActiveAction}
         resetPasswordAction={resetPasswordAction}
+        resendOnboardingAction={resendOnboardingAction}
         deleteUserAction={deleteUserAction}
         avatarAction={avatarAction}
       />

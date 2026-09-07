@@ -82,6 +82,7 @@ export function UserDirectoryTable({
   updateRoleAction,
   toggleActiveAction,
   resetPasswordAction,
+  resendOnboardingAction,
   deleteUserAction,
   avatarAction,
   canEditSuperUsers,
@@ -96,6 +97,7 @@ export function UserDirectoryTable({
   updateRoleAction: (formData: FormData) => Promise<ActionResult>;
   toggleActiveAction: (formData: FormData) => Promise<ActionResult>;
   resetPasswordAction: (formData: FormData) => Promise<ActionResult>;
+  resendOnboardingAction: (formData: FormData) => Promise<ActionResult>;
   deleteUserAction: (formData: FormData) => Promise<ActionResult>;
   avatarAction: (formData: FormData) => Promise<ActionResult>;
   canEditSuperUsers: boolean;
@@ -227,6 +229,12 @@ export function UserDirectoryTable({
     const fd = new FormData();
     fd.set("id", u.id);
     runRowAction(() => deleteUserAction(fd), "Staff member deleted");
+  }
+
+  function handleResendOnboarding(u: UserRow) {
+    const fd = new FormData();
+    fd.set("id", u.id);
+    runRowAction(() => resendOnboardingAction(fd), `Invite resent to ${u.fullName}`);
   }
 
   const sortLabel =
@@ -498,6 +506,14 @@ export function UserDirectoryTable({
                                   onClick={() => handleResetPassword(u)}
                                 >
                                   Reset password
+                                </button>
+                                <button
+                                  type="button"
+                                  role="menuitem"
+                                  className="block w-full px-3 py-2 text-left text-[0.8125rem] text-text calm-transition hover:bg-surface-container-low"
+                                  onClick={() => handleResendOnboarding(u)}
+                                >
+                                  Resend onboarding email
                                 </button>
                                 <button
                                   type="button"

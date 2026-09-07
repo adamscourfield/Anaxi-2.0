@@ -8,6 +8,7 @@ import { UserDirectoryPageShell } from "../users/UserDirectoryPageShell";
 import {
   createUser,
   deleteUser,
+  resendOnboardingInvite,
   resetPassword,
   setUserAvatar,
   toggleActive,
@@ -86,6 +87,7 @@ export async function UsersAdminPanel() {
     updateRoleAction: updateUserRole,
     toggleActiveAction: toggleActive,
     resetPasswordAction: resetPassword,
+    resendOnboardingAction: resendOnboardingInvite,
     deleteUserAction: deleteUser,
     avatarAction: setUserAvatar,
   };

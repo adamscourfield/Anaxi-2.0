@@ -21,6 +21,7 @@ export function UserDirectoryClient({
   updateRoleAction,
   toggleActiveAction,
   resetPasswordAction,
+  resendOnboardingAction,
   deleteUserAction,
   avatarAction,
 }: {
@@ -37,6 +38,7 @@ export function UserDirectoryClient({
   updateRoleAction: (formData: FormData) => Promise<ActionResult>;
   toggleActiveAction: (formData: FormData) => Promise<ActionResult>;
   resetPasswordAction: (formData: FormData) => Promise<ActionResult>;
+  resendOnboardingAction: (formData: FormData) => Promise<ActionResult>;
   deleteUserAction: (formData: FormData) => Promise<ActionResult>;
   avatarAction: (formData: FormData) => Promise<ActionResult>;
 }) {
@@ -66,6 +68,7 @@ export function UserDirectoryClient({
         updateRoleAction={updateRoleAction}
         toggleActiveAction={toggleActiveAction}
         resetPasswordAction={resetPasswordAction}
+        resendOnboardingAction={resendOnboardingAction}
         deleteUserAction={deleteUserAction}
         avatarAction={avatarAction}
         canEditSuperUsers={canEditSuperUsers}

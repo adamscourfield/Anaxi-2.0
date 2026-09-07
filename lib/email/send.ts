@@ -20,6 +20,48 @@ export interface SendEmailResult {
   providerId?: string;
 }
 
+// Resend rate-limits at roughly 2 requests/second. A bulk operation (e.g.
+// importing 50+ staff at once, each triggering an onboarding email) fires
+// those sends far faster than that if left unthrottled, so every request
+// to Resend is funneled through this queue to space them out, with a retry
+// on 429 as a second line of defense.
+const MIN_SEND_INTERVAL_MS = 550;
+const MAX_RATE_LIMIT_RETRIES = 3;
+let sendQueueTail: Promise<void> = Promise.resolve();
+
+function throttled<T>(fn: () => Promise<T>): Promise<T> {
+  // Tests mock fetch and never hit the real API, so the spacing delay would
+  // only slow the suite down without protecting anything.
+  if (process.env.VITEST) return fn();
+
+  const result = sendQueueTail.then(fn, fn);
+  sendQueueTail = result.then(
+    () => new Promise((resolve) => setTimeout(resolve, MIN_SEND_INTERVAL_MS)),
+    () => new Promise((resolve) => setTimeout(resolve, MIN_SEND_INTERVAL_MS)),
+  );
+  return result;
+}
+
+async function postToResendWithRetry(body: Record<string, unknown>): Promise<Response> {
+  let response: Response;
+  for (let attempt = 0; ; attempt++) {
+    response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (response.status !== 429 || attempt >= MAX_RATE_LIMIT_RETRIES) return response;
+    const retryAfterSec = Number(response.headers.get("retry-after"));
+    const backoffMs = Number.isFinite(retryAfterSec) && retryAfterSec > 0
+      ? retryAfterSec * 1000
+      : 1000 * 2 ** attempt;
+    await new Promise((resolve) => setTimeout(resolve, Math.min(backoffMs, 10_000)));
+  }
+}
+
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
   const {
     to,
@@ -69,14 +111,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
       }));
     }
 
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+    const res = await throttled(() => postToResendWithRetry(body));
 
     const responseJson = res.ok
       ? ((await res.json().catch(() => ({}))) as { id?: string })

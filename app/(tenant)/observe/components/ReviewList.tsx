@@ -132,7 +132,7 @@ export function ReviewList({
 
   return (
     <ReviewStageChrome>
-      <div className="relative -mx-4 min-h-0 bg-[var(--surface-container-low)] px-4 pb-14 pt-1 sm:-mx-6 sm:px-6">
+      <div className="relative min-h-0 pb-14 pt-1">
         <div className="mx-auto max-w-6xl">
           <div className="mb-6">
             <h2 className={`text-[1.375rem] font-bold ${OBS_REVIEW_TEXT}`}>Review &amp; Submit</h2>

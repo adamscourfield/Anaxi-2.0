@@ -35,6 +35,7 @@ It is intended to reduce direct role checks in UI and route handlers.
 - `actions:create`
 - `actions:manage`
 - `actions:view_own`
+- `actions:view_all`
 
 ### Leave
 - `leave:request`

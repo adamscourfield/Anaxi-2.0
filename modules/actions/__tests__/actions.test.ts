@@ -58,12 +58,19 @@ describe("RBAC – action permissions", () => {
     expect(hasPermission("ADMIN", "actions:create")).toBe(true);
     expect(hasPermission("ADMIN", "actions:manage")).toBe(true);
     expect(hasPermission("ADMIN", "actions:view_own")).toBe(true);
+    expect(hasPermission("ADMIN", "actions:view_all")).toBe(true);
   });
 
-  it("TEACHER has create, manage, view_own", () => {
+  it("SLT can view all action items for oversight, without meeting notes access", () => {
+    expect(hasPermission("SLT", "actions:view_all")).toBe(true);
+    expect(hasPermission("SLT", "meetings:view_all")).toBe(false);
+  });
+
+  it("TEACHER has create, manage, view_own but not view_all", () => {
     expect(hasPermission("TEACHER", "actions:create")).toBe(true);
     expect(hasPermission("TEACHER", "actions:manage")).toBe(true);
     expect(hasPermission("TEACHER", "actions:view_own")).toBe(true);
+    expect(hasPermission("TEACHER", "actions:view_all")).toBe(false);
   });
 
   it("HR can only view_own", () => {

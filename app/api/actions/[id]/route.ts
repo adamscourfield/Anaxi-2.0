@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const action = await getActionDetail(user.tenantId, resolvedParams.id);
-    if (action.ownerUserId !== user.id && !hasPermission(user.role, "meetings:view_all")) {
+    if (action.ownerUserId !== user.id && !hasPermission(user.role, "actions:view_all")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

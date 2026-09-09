@@ -1,19 +1,33 @@
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { randomBytes } from "crypto";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["application/pdf", "image/jpeg", "image/png", "image/jpg"]);
 const ALLOWED_EXT = new Set([".pdf", ".jpg", ".jpeg", ".png"]);
 
+const EXT_MIME_FALLBACK: Record<string, string> = {
+  ".pdf": "application/pdf",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+};
+
 export function medicalEvidencePublicPath(fileToken: string): string {
   return `/api/leave/evidence/${fileToken}`;
 }
 
-export async function saveMedicalEvidenceFile(
-  tenantId: string,
+export function generateEvidenceFileToken(): string {
+  return randomBytes(16).toString("hex");
+}
+
+/**
+ * Validate an uploaded medical evidence file and read it into memory. The
+ * bytes are stored directly on the LOARequest row (see
+ * LOARequest.medicalEvidenceData) rather than written to disk, since the
+ * deployed filesystem is read-only outside of /tmp.
+ */
+export async function readMedicalEvidenceFile(
   file: File,
-): Promise<{ url: string; fileToken: string }> {
+): Promise<{ data: Buffer; mimeType: string }> {
   if (!file || file.size <= 0) {
     throw new Error("EMPTY_FILE");
   }
@@ -21,7 +35,7 @@ export async function saveMedicalEvidenceFile(
     throw new Error("FILE_TOO_LARGE");
   }
 
-  const ext = path.extname(file.name || "").toLowerCase();
+  const ext = (file.name.match(/\.[^.]+$/)?.[0] ?? "").toLowerCase();
   if (!ALLOWED_EXT.has(ext)) {
     throw new Error("INVALID_FILE_TYPE");
   }
@@ -30,18 +44,6 @@ export async function saveMedicalEvidenceFile(
     throw new Error("INVALID_FILE_TYPE");
   }
 
-  const fileToken = `${tenantId}_${randomBytes(16).toString("hex")}${ext}`;
-  const dir = path.join(process.cwd(), "uploads", "leave", tenantId);
-  await mkdir(dir, { recursive: true });
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(dir, fileToken), buffer);
-
-  return { fileToken, url: medicalEvidencePublicPath(fileToken) };
-}
-
-export function medicalEvidenceDiskPath(tenantId: string, fileToken: string): string | null {
-  if (!fileToken.startsWith(`${tenantId}_`)) return null;
-  const base = path.basename(fileToken);
-  if (base !== fileToken || base.includes("..")) return null;
-  return path.join(process.cwd(), "uploads", "leave", tenantId, base);
+  const data = Buffer.from(await file.arrayBuffer());
+  return { data, mimeType: mime || EXT_MIME_FALLBACK[ext] };
 }

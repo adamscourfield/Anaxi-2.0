@@ -7,7 +7,7 @@ import { notifyLeaveReviewers } from "@/lib/inAppNotifications";
 import { requireFeature } from "@/lib/guards";
 import { canManageLoa, loaApproversForRequest } from "@/lib/loa";
 import { parseLocalDateInput } from "@/lib/leaveDates";
-import { saveMedicalEvidenceFile } from "@/lib/leaveMedicalUpload";
+import { generateEvidenceFileToken, medicalEvidencePublicPath, readMedicalEvidenceFile } from "@/lib/leaveMedicalUpload";
 import { validateLeavePolicy, type LeavePolicyViolation } from "@/lib/leavePolicy";
 import { approvedStatusFilter, isLoaDecisionType, isPendingStatus } from "@/lib/leaveStatus";
 import { prisma } from "@/lib/prisma";
@@ -31,11 +31,15 @@ export async function createLoaRequest(formData: FormData) {
   let medicalEvidenceUrl = String(formData.get("medicalEvidenceUrl") || "").trim() || null;
   const notes = String(formData.get("notes") || "").trim() || null;
 
+  let medicalEvidenceData: Buffer | null = null;
+  let medicalEvidenceMimeType: string | null = null;
   const evidenceFile = formData.get("medicalEvidence");
   if (evidenceFile instanceof File && evidenceFile.size > 0) {
     try {
-      const saved = await saveMedicalEvidenceFile(user.tenantId, evidenceFile);
-      medicalEvidenceUrl = saved.url;
+      const read = await readMedicalEvidenceFile(evidenceFile);
+      medicalEvidenceData = read.data;
+      medicalEvidenceMimeType = read.mimeType;
+      medicalEvidenceUrl = medicalEvidencePublicPath(generateEvidenceFileToken());
     } catch {
       redirectRequestError("INVALID_REQUEST");
     }
@@ -77,6 +81,8 @@ export async function createLoaRequest(formData: FormData) {
       reasonText,
       coverRequirements,
       medicalEvidenceUrl,
+      medicalEvidenceData,
+      medicalEvidenceMimeType,
       notes,
       status: "PENDING",
     },

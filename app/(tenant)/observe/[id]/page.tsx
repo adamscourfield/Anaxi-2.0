@@ -180,7 +180,7 @@ export default async function ObservationDetailPage({ params }: { params: Promis
   );
 
   return (
-    <div className="relative -mx-4 min-h-0 bg-[var(--surface-container-low)] px-4 pb-14 pt-1 sm:-mx-6 sm:px-6">
+    <div className="relative min-h-0 pb-14 pt-1">
       <ClearDraftOnSuccess draftKey={draftKey} />
 
       <div className="mx-auto max-w-6xl">

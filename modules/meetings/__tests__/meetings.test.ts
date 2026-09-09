@@ -67,8 +67,10 @@ describe("RBAC – meetings permissions", () => {
     expect(hasPermission("TEACHER", "meetings:edit")).toBe(false);
   });
 
-  it("SLT can view all", () => {
-    expect(hasPermission("SLT", "meetings:view_all")).toBe(true);
+  it("SLT can only view meetings it created or was invited to, not every meeting", () => {
+    expect(hasPermission("SLT", "meetings:view_all")).toBe(false);
+    expect(hasPermission("SLT", "meetings:edit")).toBe(false);
+    expect(hasPermission("SLT", "meetings:view_own")).toBe(true);
     expect(hasPermission("SLT", "meetings:create")).toBe(true);
   });
 

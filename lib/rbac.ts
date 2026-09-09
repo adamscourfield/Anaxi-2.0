@@ -26,7 +26,8 @@ export type MeetingPermission =
 export type ActionPermission =
   | "actions:create"
   | "actions:manage"
-  | "actions:view_own";
+  | "actions:view_own"
+  | "actions:view_all";
 
 export type ObservePermission =
   | "observe:view"
@@ -72,7 +73,7 @@ const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
     "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel", "oncall:delete",
     "import:write", "students:read", "students:write",
     "meetings:create", "meetings:view_own", "meetings:view_all", "meetings:edit", "meetings:delete",
-    "actions:create", "actions:manage", "actions:view_own",
+    "actions:create", "actions:manage", "actions:view_own", "actions:view_all",
     "observe:view", "observe:view_all", "observe:create", "observe:configure",
     "leave:request", "leave:approve", "leave:approve_all",
     "analysis:view", "analysis:view_behaviour", "analysis:export",
@@ -82,7 +83,7 @@ const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
     "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:cancel", "oncall:delete",
     "import:write", "students:read", "students:write",
     "meetings:create", "meetings:view_own", "meetings:view_all", "meetings:edit", "meetings:delete",
-    "actions:create", "actions:manage", "actions:view_own",
+    "actions:create", "actions:manage", "actions:view_own", "actions:view_all",
     "observe:view", "observe:view_all", "observe:create", "observe:configure",
     "leave:request", "leave:approve", "leave:approve_all",
     "analysis:view", "analysis:view_behaviour", "analysis:export",
@@ -92,11 +93,18 @@ const ROLE_PERMISSIONS: Record<UserRole, AppPermission[]> = {
   // and approval is now opt-in per person (canApproveAllLoa / scoped groups),
   // same mechanism already used for HOD/HR/Leader. Existing SLT staff were
   // grandfathered in via a data migration so nobody lost access on upgrade.
+  //
+  // SLT also no longer gets blanket "meetings:view_all"/"meetings:edit" --
+  // that let any SLT member read (and edit) every meeting in the school,
+  // including other managers' private line-management notes. SLT can still
+  // see and manage meetings they created or were invited to, same as any
+  // other role. "actions:view_all" is kept separately so SLT retains
+  // oversight of follow-up action items without also unlocking meeting notes.
   SLT: [
     "oncall:create", "oncall:acknowledge", "oncall:resolve", "oncall:view_all", "oncall:delete",
     "import:write", "students:read", "students:write",
-    "meetings:create", "meetings:view_all", "meetings:edit",
-    "actions:create", "actions:manage", "actions:view_own",
+    "meetings:create", "meetings:view_own",
+    "actions:create", "actions:manage", "actions:view_own", "actions:view_all",
     "observe:view", "observe:view_all", "observe:create",
     "leave:request", "leave:approve",
     "analysis:view", "analysis:view_behaviour", "analysis:export",

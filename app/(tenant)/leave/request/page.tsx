@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeatureForPage } from "@/lib/guards";
 import { businessDaysBetween } from "@/lib/leaveDates";
-import { leavePolicyMessageForCode, LEAVE_MEDICAL_MIN_BUSINESS_DAYS, LEAVE_NOTICE_HOURS } from "@/lib/leavePolicy";
+import { leavePolicyMessageForCode, LEAVE_MEDICAL_MIN_BUSINESS_DAYS } from "@/lib/leavePolicy";
 import { approvedStatusFilter, isPendingStatus } from "@/lib/leaveStatus";
 import { prisma } from "@/lib/prisma";
 import { createLoaRequest } from "../actions";
@@ -86,12 +86,7 @@ export default async function LeaveRequestPage({
           <form action={createLoaRequest} encType="multipart/form-data" className="space-y-5">
             <div className="home-hero-glass rounded-sm border border-border p-5 shadow-none sm:p-6">
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <FormField
-                  id="loa-start"
-                  label="Start date"
-                  required
-                  hint={`Submit at least ${LEAVE_NOTICE_HOURS} hours before the first day where possible.`}
-                >
+                <FormField id="loa-start" label="Start date" required>
                   <input
                     id="loa-start"
                     required
@@ -222,17 +217,6 @@ export default async function LeaveRequestPage({
           <div className="home-hero-glass rounded-2xl border border-[color-mix(in_srgb,var(--outline-variant)_16%,transparent)] px-5 py-5 sm:px-6">
             <h3 className="mb-4 text-base font-bold tracking-[-0.02em] text-text">Institutional Policy</h3>
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[var(--surface-container-low)] text-muted ring-1 ring-[color-mix(in_srgb,var(--outline-variant)_12%,transparent)]">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <p className="text-[0.8125rem] leading-relaxed text-muted">
-                  Requests must be submitted at least {LEAVE_NOTICE_HOURS} hours before the start date for planned absences.
-                </p>
-              </div>
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[var(--status-approved-light)] text-[var(--status-approved-text)]">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>

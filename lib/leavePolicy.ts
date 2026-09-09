@@ -1,12 +1,10 @@
 import { businessDaysBetween, dateRangesOverlap } from "@/lib/leaveDates";
 import { approvedStatusFilter, isPendingStatus } from "@/lib/leaveStatus";
 
-export const LEAVE_NOTICE_HOURS = 48;
 export const LEAVE_MEDICAL_MIN_BUSINESS_DAYS = 3;
 
 export type LeavePolicyViolation =
   | "INVALID_DATES"
-  | "NOTICE_PERIOD"
   | "MEDICAL_REQUIRED"
   | "OVERLAPPING_LEAVE";
 
@@ -21,25 +19,16 @@ export type LeavePolicyInput = {
     status: string;
   }>;
   excludeRequestId?: string;
-  now?: Date;
 };
 
 export function validateLeavePolicy(input: LeavePolicyInput): LeavePolicyViolation | null {
   const { startDate, endDate, medicalEvidenceUrl, existingRequests, excludeRequestId } = input;
-  const now = input.now ?? new Date();
 
   if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
     return "INVALID_DATES";
   }
 
   const businessDays = businessDaysBetween(startDate, endDate);
-  const startMidnight = new Date(startDate);
-  startMidnight.setHours(0, 0, 0, 0);
-  const msUntilStart = startMidnight.getTime() - now.getTime();
-
-  if (msUntilStart > 0 && msUntilStart < LEAVE_NOTICE_HOURS * 60 * 60 * 1000) {
-    return "NOTICE_PERIOD";
-  }
 
   if (businessDays >= LEAVE_MEDICAL_MIN_BUSINESS_DAYS && !medicalEvidenceUrl?.trim()) {
     return "MEDICAL_REQUIRED";
@@ -61,12 +50,7 @@ export function validateLeavePolicy(input: LeavePolicyInput): LeavePolicyViolati
 export function leavePolicyMessageForCode(code: string): string {
   if (code === "INVALID_REASON") return "Please select a valid leave reason.";
   if (code === "INVALID_REQUEST") return "Please check your dates and try again.";
-  if (
-    code === "INVALID_DATES" ||
-    code === "NOTICE_PERIOD" ||
-    code === "MEDICAL_REQUIRED" ||
-    code === "OVERLAPPING_LEAVE"
-  ) {
+  if (code === "INVALID_DATES" || code === "MEDICAL_REQUIRED" || code === "OVERLAPPING_LEAVE") {
     return leavePolicyErrorMessage(code as LeavePolicyViolation);
   }
   return "Unable to submit this request.";
@@ -76,8 +60,6 @@ export function leavePolicyErrorMessage(code: LeavePolicyViolation): string {
   switch (code) {
     case "INVALID_DATES":
       return "End date must be on or after the start date.";
-    case "NOTICE_PERIOD":
-      return `Planned leave must be submitted at least ${LEAVE_NOTICE_HOURS} hours before the start date.`;
     case "MEDICAL_REQUIRED":
       return `Medical evidence is required for absences of ${LEAVE_MEDICAL_MIN_BUSINESS_DAYS} or more consecutive working days.`;
     case "OVERLAPPING_LEAVE":

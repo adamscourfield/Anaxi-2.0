@@ -1,19 +1,10 @@
-import { readFile } from "fs/promises";
 import { NextResponse } from "next/server";
 import path from "path";
 import { getSessionUserOrThrow } from "@/lib/auth";
 import { requireFeature } from "@/lib/guards";
 import { canManageLoa } from "@/lib/loa";
-import { medicalEvidenceDiskPath } from "@/lib/leaveMedicalUpload";
 import { prisma } from "@/lib/prisma";
 import { withApi } from "@/lib/apiRoute";
-
-const MIME: Record<string, string> = {
-  ".pdf": "application/pdf",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".png": "image/png",
-};
 
 export const GET = withApi(async function GET(
   _req: Request,
@@ -25,19 +16,15 @@ export const GET = withApi(async function GET(
     await requireFeature(user.tenantId, "LEAVE");
 
     const fileToken = path.basename(resolvedParams.fileToken);
-    const diskPath = medicalEvidenceDiskPath(user.tenantId, fileToken);
-    if (!diskPath) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
 
     const loa = await prisma.lOARequest.findFirst({
       where: {
         tenantId: user.tenantId,
         medicalEvidenceUrl: { contains: fileToken },
       },
-      select: { requesterId: true },
+      select: { requesterId: true, medicalEvidenceData: true, medicalEvidenceMimeType: true },
     });
-    if (!loa) {
+    if (!loa || !loa.medicalEvidenceData) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
@@ -47,11 +34,9 @@ export const GET = withApi(async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const ext = path.extname(fileToken).toLowerCase();
-    const body = await readFile(diskPath);
-    return new NextResponse(body, {
+    return new NextResponse(new Uint8Array(loa.medicalEvidenceData), {
       headers: {
-        "Content-Type": MIME[ext] ?? "application/octet-stream",
+        "Content-Type": loa.medicalEvidenceMimeType ?? "application/octet-stream",
         "Cache-Control": "private, no-store",
       },
     });

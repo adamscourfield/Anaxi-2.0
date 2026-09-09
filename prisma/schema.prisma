@@ -182,6 +182,8 @@ model LOARequest {
   reasonText         String?
   coverRequirements  String?
   medicalEvidenceUrl String?
+  medicalEvidenceData Bytes?
+  medicalEvidenceMimeType String?
   notes              String?
   decisionNotes      String?
   decidedById        String?

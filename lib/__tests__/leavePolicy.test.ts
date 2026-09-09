@@ -7,18 +7,17 @@ describe("validateLeavePolicy", () => {
     endDate: new Date(2026, 5, 12),
     medicalEvidenceUrl: null as string | null,
     existingRequests: [] as Array<{ id: string; startDate: Date; endDate: Date; status: string }>,
-    now: new Date(2026, 5, 1),
   };
 
-  it("rejects insufficient notice for future planned leave", () => {
+  it("allows leave starting the same day, with no minimum notice period", () => {
     expect(
       validateLeavePolicy({
         ...base,
-        startDate: new Date(2026, 5, 2),
-        endDate: new Date(2026, 5, 2),
-        now: new Date(2026, 5, 1, 12, 0, 0),
+        startDate: new Date(2026, 5, 1),
+        endDate: new Date(2026, 5, 1),
+        medicalEvidenceUrl: "/file",
       }),
-    ).toBe("NOTICE_PERIOD");
+    ).toBeNull();
   });
 
   it("requires medical evidence for 3+ business days", () => {
